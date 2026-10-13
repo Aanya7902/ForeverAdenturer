@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ForeverAdventurer — Real Travel, Real Fun, Real Life | IG Reels Studio</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts: Plus Jakarta Sans, Playfair Display & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            adventurer: {
+              charcoal: '#0b0f14',
+              surface: '#131921',
+              card: '#1a222c',
+              border: '#293542',
+              amber: '#f59e0b',
+              terracotta: '#e06847',
+              gold: '#eab308',
+              emerald: '#10b981',
+              rose: '#f43f5e'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #293542; border-radius: 4px; }
+    
+    .reel-viewport {
+      aspect-ratio: 9 / 16;
+    }
+  </style>
+</head>
+<body class="bg-adventurer-charcoal text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-amber-500/30 selection:text-amber-200">
+
+  <!-- TOP BRAND HEADER -->
+  <header class="border-b border-adventurer-border bg-adventurer-surface/90 backdrop-blur sticky top-0 z-40 px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+    <div class="flex items-center space-x-3.5">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-adventurer-terracotta to-adventurer-rose flex items-center justify-center shadow-lg shadow-black/50 border border-amber-500/30">
+        <i data-lucide="compass" class="w-5 h-5 text-white stroke-[2.5]"></i>
+      </div>
+      <div>
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span class="text-base sm:text-lg font-extrabold tracking-tight text-white">ForeverAdventurer</span>
+          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 to-rose-500/20 text-amber-300 border border-amber-500/30">
+            Real Travel &bull; Real Fun &bull; Real Life
+          </span>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">
+          <span class="text-amber-400 font-medium">"The world is wide. Your soul is limitless."</span> &bull; See more. Spend smarter. Laugh often. Wander freely. Live fully.
+        </p>
+      </div>
+    </div>
+
+    <!-- Quick Tool Actions -->
+    <div class="flex items-center space-x-2 sm:space-x-3">
+      <button onclick="toggleSetupModal(true)" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-adventurer-card hover:bg-adventurer-border text-slate-200 text-xs font-semibold border border-adventurer-border transition">
+        <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-amber-400"></i>
+        <span class="hidden md:inline">Google Photos Setup</span>
+        <span class="md:hidden">Setup</span>
+      </button>
+      <button onclick="copyProductionKit()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-adventurer-card hover:bg-adventurer-border text-slate-200 text-xs font-semibold border border-adventurer-border transition">
+        <i data-lucide="copy" class="w-3.5 h-3.5 text-adventurer-emerald"></i>
+        <span>Copy Kit</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN STUDIO LAYOUT -->
+  <main class="flex-1 max-w-[1720px] w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+    
+    <!-- LEFT PANEL: WORKFLOW CONTROLS (COLUMNS 1-7) -->
+    <div class="lg:col-span-7 space-y-6">
+
+      <!-- STEP 1: IMPORT MEDIA (GOOGLE PHOTOS & LOCAL FILES) -->
+      <section class="bg-adventurer-surface border border-adventurer-border rounded-2xl p-5 shadow-xl">
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-adventurer-border">
+          <div class="flex items-center space-x-2.5">
+            <span class="w-6 h-6 rounded-full bg-amber-500 text-slate-950 text-xs font-black flex items-center justify-center">1</span>
+            <div>
+              <h2 class="text-sm font-bold uppercase tracking-wider text-slate-200">Personal Travel Footage</h2>
+              <p class="text-[11px] text-slate-400">Your authentic memories remain 100% natural and unaltered</p>
+            </div>
+          </div>
+          <span id="photo-count-badge" class="text-xs bg-adventurer-card border border-adventurer-border text-amber-300 font-mono px-2 py-0.5 rounded-full">
+            4 photos
+          </span>
+        </div>
+
+        <!-- Google Photos Picker + Local Upload Buttons -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+          <button onclick="handleConnectGooglePhotos()" class="flex items-center justify-center space-x-2 p-3 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs transition shadow-md group">
+            <svg class="w-4 h-4" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.28v3.15C3.27 21.32 7.35 24 12 24z"/>
+              <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.28C.46 8.21 0 10.05 0 12s.46 3.79 1.28 5.42l4-3.15z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.27 2.68 1.28 6.58l4 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+            </svg>
+            <span class="group-hover:text-amber-600 transition">Connect Google Photos</span>
+          </button>
+
+          <label class="flex items-center justify-center space-x-2 p-3 rounded-xl bg-adventurer-card hover:bg-adventurer-border text-slate-200 border border-adventurer-border cursor-pointer font-bold text-xs transition">
+            <i data-lucide="upload-cloud" class="w-4 h-4 text-amber-400"></i>
+            <span>Upload High-Res Photos</span>
+            <input type="file" id="localFileInput" multiple accept="image/*" class="hidden" onchange="handleFileUpload(event)">
+          </label>
+        </div>
+
+        <!-- Authenticity Guarantee Banner -->
+        <div class="flex items-center space-x-2.5 p-2.5 rounded-xl bg-emerald-950/30 border border-emerald-800/40 text-emerald-400 text-[11px] mb-4">
+          <i data-lucide="shield-check" class="w-4 h-4 shrink-0 text-emerald-400"></i>
+          <span><strong>Authenticity Guarantee:</strong> Your original photos retain their real facial features, skin texture, and expressions. Zero fake beauty filters or artificial smoothing.</span>
+        </div>
+
+        <!-- Gallery Sequence with Reorder & Remove Controls -->
+        <div>
+          <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+            <span>Reel Sequence (Arranged left to right):</span>
+            <div class="space-x-2">
+              <button onclick="loadSampleExpedition('nepal')" class="text-amber-400 hover:underline">Sample 1: Nepal</button>
+              <span class="text-slate-600">&bull;</span>
+              <button onclick="loadSampleExpedition('vietnam')" class="text-amber-400 hover:underline">Sample 2: Vietnam Street Eats</button>
+              <span class="text-slate-600">&bull;</span>
+              <button onclick="clearAllPhotos()" class="text-rose-400 hover:underline">Clear</button>
+            </div>
+          </div>
+          <div id="galleryContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 min-h-[100px] p-2 bg-adventurer-charcoal rounded-xl border border-adventurer-border/80">
+            <!-- Dynamically injected gallery cards -->
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 2: 12 REEL STORYTELLING FORMATS & CONTENT PILLARS -->
+      <section class="bg-adventurer-surface border border-adventurer-border rounded-2xl p-5 shadow-xl space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-adventurer-border">
+          <div class="flex items-center space-x-2.5">
+            <span class="w-6 h-6 rounded-full bg-amber-500 text-slate-950 text-xs font-black flex items-center justify-center">2</span>
+            <div>
+              <h2 class="text-sm font-bold uppercase tracking-wider text-slate-200">Reel Format & Storytelling Angle</h2>
+              <p class="text-[11px] text-slate-400">Choose how to frame this memory: witty, soulful, budget-savvy, or practical</p>
+            </div>
+          </div>
+          <span class="text-xs text-amber-400 font-semibold font-mono">12 Formats Available</span>
+        </div>
+
+        <!-- 12 Format Selector Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-left" id="format-selector-grid">
+          <!-- Dynamically populated or statically rendered buttons -->
+        </div>
+
+        <!-- Active Format Description Banner -->
+        <div id="format-banner" class="p-3 rounded-xl bg-adventurer-card border border-adventurer-border text-xs flex items-start space-x-3">
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+          <div>
+            <span id="format-title" class="font-bold text-amber-300">The Cheeky Traveller</span>
+            <p id="format-desc" class="text-slate-300 mt-0.5 leading-relaxed">
+              Witty, playful, self-aware humour about getting lost, funny mishaps, and embracing the imperfect joy of real travel.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 3: CONTEXT, BUDGET & MISHAP INTAKE -->
+      <section class="bg-adventurer-surface border border-adventurer-border rounded-2xl p-5 shadow-xl space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-adventurer-border">
+          <div class="flex items-center space-x-2.5">
+            <span class="w-6 h-6 rounded-full bg-amber-500 text-slate-950 text-xs font-black flex items-center justify-center">3</span>
+            <div>
+              <h2 class="text-sm font-bold uppercase tracking-wider text-slate-200">Travel Context & Real Details</h2>
+              <p class="text-[11px] text-slate-400">Add the unvarnished truth, budget wins, or lessons learned</p>
+            </div>
+          </div>
+          <span class="text-xs text-slate-400">Verified & Honest Facts</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Destination & Country</label>
+            <input id="destinationInput" type="text" class="w-full bg-adventurer-charcoal border border-adventurer-border rounded-xl p-2.5 text-xs text-slate-200 focus:border-amber-400 outline-none" value="Hanoi & Ha Giang Loop, Vietnam">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Budget Win / Actual Price (Optional)</label>
+            <input id="budgetDetailInput" type="text" class="w-full bg-adventurer-charcoal border border-adventurer-border rounded-xl p-2.5 text-xs text-slate-200 focus:border-amber-400 outline-none" placeholder="e.g. £1.80 ($2.30) Pho bowl, £14 scenic sleeper bus">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">What Actually Happened (Mishaps, Laughs, Discoveries)</label>
+            <textarea id="adventureNotes" rows="2" class="w-full bg-adventurer-charcoal border border-adventurer-border rounded-xl p-2.5 text-xs text-slate-200 focus:border-amber-400 outline-none resize-none">Rented a motorbike, trusted Google Maps, ended up crossing a suspension bridge meant for ducks. Stalled the engine, laughed until crying with a roadside fruit vendor.</textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">The Real Lesson / Honest Travel Tip</label>
+            <textarea id="lessonNotes" rows="2" class="w-full bg-adventurer-charcoal border border-adventurer-border rounded-xl p-2.5 text-xs text-slate-200 focus:border-amber-400 outline-none resize-none">Never let a wrong turn ruin your afternoon. The secret to budget travel isn't luxury hotels; it's following the grandmothers into the alleyways for lunch.</textarea>
+          </div>
+        </div>
+
+        <!-- AI Director Trigger -->
+        <button onclick="directReelWithAI()" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-adventurer-terracotta to-adventurer-rose hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center space-x-2 shadow-lg shadow-black/40 transition active:scale-98">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span>Direct My Reel with ForeverAdventurer Voice</span>
+        </button>
+      </section>
+
+      <!-- STEP 4: EDITABLE REEL SCRIPT & CAPTIONS -->
+      <section class="bg-adventurer-surface border border-adventurer-border rounded-2xl p-5 shadow-xl space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-adventurer-border">
+          <div class="flex items-center space-x-2.5">
+            <span class="w-6 h-6 rounded-full bg-amber-500 text-slate-950 text-xs font-black flex items-center justify-center">4</span>
+            <div>
+              <h2 class="text-sm font-bold uppercase tracking-wider text-slate-200">Reel Script & Subtitles</h2>
+              <p class="text-[11px] text-slate-400">Edits update the 9:16 vertical video player in real time</p>
+            </div>
+          </div>
+          <span class="text-xs text-amber-400 font-mono">Live Sync Active</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Reel Duration</label>
+            <div class="grid grid-cols-3 gap-1 bg-adventurer-charcoal p-1 rounded-xl border border-adventurer-border text-center">
+              <button type="button" onclick="setReelDuration(15)" id="dur-15" class="py-1 rounded-lg text-[11px] font-semibold text-slate-400">15s</button>
+              <button type="button" onclick="setReelDuration(30)" id="dur-30" class="py-1 rounded-lg text-[11px] font-bold bg-amber-500 text-slate-950 shadow">30s</button>
+              <button type="button" onclick="setReelDuration(60)" id="dur-60" class="py-1 rounded-lg text-[11px] font-semibold text-slate-400">60s</button>
+            </div>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Audio Vibe</label>
+            <select id="musicTrackSelect" onchange="updateAudioVibe()" class="w-full bg-adventurer-charcoal border border-adventurer-border rounded-xl p-2 text-xs text-slate-200 focus:outline-none">
+              <option value="upbeat_indie" selected>Cheeky Indie / Upbeat Wanderer</option>
+              <option value="acoustic_strings">Soulful Acoustic Strings</option>
+              <option value="meditation_chimes">Tibetan Chimes & Ambient Waves</option>
+              <option value="cinematic_strings">Cinematic Golden Hour Strings</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Voiceover Accent</label>
+            <div class="text-xs font-medium text-amber-300 bg-adventurer-charcoal border border-adventurer-border p-2 rounded-xl truncate">
+              Warm, cheeky, British English friend
+            </div>
+          </div>
+        </div>
+
+        <!-- Editable On-Screen Hook -->
+        <div>
+          <label class="block text-[11px] font-bold uppercase text-amber-400 mb-1">On-Screen Reel Hook (First 2.5s)</label>
+          <input id="reelHookInput" oninput="renderOverlayText()" type="text" class="w-full bg-adventurer-charcoal border border-adventurer-border rounded-xl p-2.5 text-xs font-bold text-white focus:border-amber-400 outline-none" value="Came for the breathtaking views. Stayed because I took a wrong turn.">
+        </div>
+
+        <!-- 3-Act Subtitle Narratives -->
+        <div class="space-y-2">
+          <label class="block text-[11px] font-semibold text-slate-400">3-Act Subtitle Progression (Synced with video pacing)</label>
+          <div class="grid grid-cols-1 gap-2">
+            <input id="act1Subtitle" oninput="renderOverlayText()" class="w-full bg-adventurer-charcoal border border-adventurer-border rounded-lg p-2 text-xs text-slate-200" value="Act 1: That moment when Google Maps swears this walking trail is a highway.">
+            <input id="act2Subtitle" oninput="renderOverlayText()" class="w-full bg-adventurer-charcoal border border-adventurer-border rounded-lg p-2 text-xs text-slate-200" value="Act 2: But then you stop, share fruit with a laughing grandmother, and remember why you travel.">
+            <input id="act3Subtitle" oninput="renderOverlayText()" class="w-full bg-adventurer-charcoal border border-adventurer-border rounded-lg p-2 text-xs text-slate-200" value="Act 3: The best memories aren't planned. See more. Spend smarter. Laugh often.">
+          </div>
+        </div>
+
+        <!-- Instagram Caption & Viral Travel Hashtags -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-[11px] font-semibold text-slate-400">Instagram Reel Caption & Verified Tags</label>
+            <button onclick="copyCaptionToClipboard()" class="text-[11px] text-amber-400 hover:underline flex items-center space-x-1">
+              <i data-lucide="copy" class="w-3 h-3"></i>
+              <span>Copy Caption</span>
+            </button>
+          </div>
+          <textarea id="igCaptionTextarea" rows="3" class="w-full bg-adventurer-charcoal border border-adventurer-border rounded-xl p-2.5 text-xs text-slate-200 focus:border-amber-400 outline-none resize-none"></textarea>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- RIGHT PANEL: INTERACTIVE 9:16 INSTAGRAM REELS SIMULATOR (COLUMNS 8-12) -->
+    <div class="lg:col-span-5 flex flex-col items-center">
+      <div class="sticky top-20 w-full max-w-sm flex flex-col items-center">
+        
+        <!-- Smartphone Body Container -->
+        <div class="w-full bg-adventurer-surface border-4 border-adventurer-border rounded-[44px] p-3 shadow-2xl shadow-black relative overflow-hidden">
+          
+          <!-- Dynamic Island / Speaker -->
+          <div class="w-24 h-4 bg-black rounded-full mx-auto mb-2 flex items-center justify-center space-x-2">
+            <div class="w-2 h-2 rounded-full bg-slate-800"></div>
+            <div class="w-1.5 h-1.5 rounded-full bg-amber-900/60"></div>
+          </div>
+
+          <!-- 9:16 Canvas Viewport -->
+          <div class="reel-viewport w-full bg-black rounded-[32px] relative overflow-hidden flex items-center justify-center select-none shadow-inner">
+            <canvas id="reelCanvas" width="720" height="1280" class="w-full h-full object-cover"></canvas>
+
+            <!-- Instagram Reels Native UI Overlay Simulation (Safe Zone) -->
+            <div class="absolute inset-0 flex flex-col justify-between p-4 pointer-events-none text-white z-10">
+              
+              <!-- Top Bar -->
+              <div class="flex items-center justify-between text-xs font-semibold drop-shadow-md">
+                <span class="flex items-center space-x-1.5 bg-black/40 backdrop-blur px-2.5 py-1 rounded-full border border-white/10">
+                  <i data-lucide="compass" class="w-3.5 h-3.5 text-amber-400"></i>
+                  <span class="font-bold tracking-tight text-[11px]">ForeverAdventurer</span>
+                </span>
+                <button onclick="toggleAudio()" class="w-7 h-7 rounded-full bg-black/50 backdrop-blur flex items-center justify-center pointer-events-auto border border-white/20">
+                  <i id="audioIcon" data-lucide="volume-2" class="w-3.5 h-3.5 text-amber-300"></i>
+                </button>
+              </div>
+
+              <!-- Right Side Actions (Heart, Comment, Share, Bookmark) -->
+              <div class="self-end flex flex-col items-center space-y-3.5 mb-14 drop-shadow-md">
+                <div class="flex flex-col items-center">
+                  <i data-lucide="heart" class="w-6 h-6 stroke-[2]"></i>
+                  <span class="text-[9px] mt-0.5 font-bold">42.1k</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <i data-lucide="message-circle" class="w-6 h-6 stroke-[2]"></i>
+                  <span class="text-[9px] mt-0.5 font-bold">1.4k</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <i data-lucide="send" class="w-6 h-6 stroke-[2]"></i>
+                  <span class="text-[9px] mt-0.5 font-bold">Share</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <i data-lucide="bookmark" class="w-6 h-6 stroke-[2] text-amber-400 fill-amber-400"></i>
+                  <span class="text-[9px] mt-0.5 font-bold text-amber-400">Save</span>
+                </div>
+              </div>
+
+              <!-- Bottom Profile, Caption & Audio Ticker -->
+              <div class="w-full pr-14 pb-2 drop-shadow-lg">
+                <div class="flex items-center space-x-2 mb-1.5">
+                  <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-500 to-adventurer-rose border border-white/60 flex items-center justify-center text-[10px] font-bold">
+                    FA
+                  </div>
+                  <span class="text-xs font-bold tracking-tight">@forever.adventurer</span>
+                  <span class="text-[10px] bg-white/20 backdrop-blur px-2 py-0.5 rounded-full border border-white/30 font-medium">Follow</span>
+                </div>
+                <p id="igOverlaySnippet" class="text-[11px] text-slate-100 line-clamp-1 mb-1 leading-snug">
+                  Came for the breathtaking views. Stayed because I got lost...
+                </p>
+                <div class="flex items-center space-x-1.5 text-[10px] text-slate-300">
+                  <i data-lucide="music" class="w-3 h-3 text-amber-400"></i>
+                  <span id="igOverlayTrackName" class="truncate">Cheeky Indie Wanderer &bull; Original Audio</span>
+                </div>
+              </div>
+
+              <!-- Top Timeline Progress Bar -->
+              <div class="absolute top-1 left-2 right-2 h-1 bg-white/20 rounded-full overflow-hidden">
+                <div id="timelineProgressBar" class="h-full bg-amber-400 w-0 transition-all duration-100"></div>
+              </div>
+            </div>
+
+            <!-- Play / Pause Overlay on Click -->
+            <div onclick="togglePlay()" class="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity bg-black/25 cursor-pointer z-20">
+              <button class="w-12 h-12 rounded-full bg-black/70 backdrop-blur border border-white/20 text-white flex items-center justify-center shadow-xl">
+                <i id="centerPlayIcon" data-lucide="play" class="w-5 h-5 ml-0.5"></i>
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Bottom Control Bar -->
+          <div class="mt-3 flex items-center justify-between px-2">
+            <button id="playPauseBtn" onclick="togglePlay()" class="p-2 rounded-full bg-adventurer-card hover:bg-adventurer-border text-white transition">
+              <i id="playIcon" data-lucide="play" class="w-4 h-4"></i>
+            </button>
+            <span id="timecodeDisplay" class="text-xs text-slate-400 font-mono">00:00 / 00:30</span>
+            <button onclick="recordAndExportVideo()" id="exportVideoBtn" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-adventurer-terracotta hover:opacity-90 text-slate-950 font-bold text-xs transition shadow">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span id="exportBtnLabel">Export Reel MP4</span>
+            </button>
+          </div>
+        </div>
+
+        <p class="text-[11px] text-slate-400 text-center mt-3">
+          9:16 Instagram vertical format with Ken Burns motion, real-time subtitle synthesis, and sound.
+        </p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- GOOGLE PHOTOS PICKER API SETUP MODAL -->
+  <div id="googlePhotosModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-adventurer-surface border border-adventurer-border rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-adventurer-border">
+        <div class="flex items-center space-x-2.5">
+          <div class="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Google Photos Privacy & Setup</h3>
+            <p class="text-[11px] text-slate-400">Secure Picker API (photospicker.googleapis.com)</p>
+          </div>
+        </div>
+        <button onclick="toggleSetupModal(false)" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-300 leading-relaxed">
+        Under Google's current privacy model, third-party apps never get silent background access to your entire library. You select only the specific travel photos inside an official Google popup.
+      </p>
+
+      <div class="bg-adventurer-charcoal p-4 rounded-xl border border-adventurer-border space-y-2 text-xs">
+        <div class="font-bold text-slate-200">Production Google Cloud Setup:</div>
+        <ol class="list-decimal list-inside text-slate-400 space-y-1 leading-relaxed">
+          <li>Create a project on <strong>console.cloud.google.com</strong>.</li>
+          <li>Enable <strong>Google Photos Picker API</strong>.</li>
+          <li>Create an OAuth 2.0 Web Client ID with your Vercel URL in Authorized JavaScript Origins.</li>
+          <li>Configure in your Vercel Environment Variables:
+            <code class="block mt-1 p-1.5 bg-adventurer-surface rounded text-amber-300 font-mono text-[10px]">GOOGLE_CLIENT_ID=your_id.apps.googleusercontent.com</code>
+          </li>
+        </ol>
+      </div>
+
+      <div class="p-3 bg-amber-950/20 border border-amber-900/40 rounded-xl text-amber-300 text-xs flex items-center space-x-2">
+        <i data-lucide="info" class="w-4 h-4 shrink-0"></i>
+        <span>Until your Google Cloud credentials are added, the <strong>Upload High-Res Photos</strong> button handles multi-file imports securely in your browser session.</span>
+      </div>
+
+      <button onclick="toggleSetupModal(false)" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition">
+        Got It &bull; Continue Creating
+      </button>
+    </div>
+  </div>
+
+  <!-- STUDIO JAVASCRIPT ENGINE -->
+  <script>
+    // --- 1. STATE & CONTENT TEMPLATES ---
+    let photos = [];
+    let isPlaying = false;
+    let currentTime = 0;
+    let reelDuration = 30; // 15, 30, or 60s
+    let animationFrameId = null;
+    let audioContext = null;
+    let isAudioActive = false;
+    let audioInterval = null;
+
+    // 12 Authentic Reel Storytelling Templates
+    const REEL_FORMATS = [
+      {
+        id: "cheeky_traveller",
+        name: "The Cheeky Traveller",
+        icon: "smile",
+        color: "amber",
+        desc: "Witty, playful, self-aware humour about getting lost, funny mishaps, and the imperfect joys of real travel.",
+        hook: "Came for the breathtaking views. Stayed because I took a wrong turn.",
+        act1: "Act 1: That moment when Google Maps swears this walking trail is a highway.",
+        act2: "Act 2: But then you stop, share fruit with a laughing grandmother, and remember why you travel.",
+        act3: "Act 3: The best memories aren't planned. See more. Spend smarter. Laugh often."
+      },
+      {
+        id: "soulful_journey",
+        name: "The Soulful Journey",
+        icon: "feather",
+        color: "rose",
+        desc: "Reflective, cinematic, and meaningful. Moments of quiet awe, sacred traditions, and inner peace.",
+        hook: "Leaving the noise behind: what the mountain silence taught me.",
+        act1: "Act 1: The fear was real, but the call to feel deeply alive was louder.",
+        act2: "Act 2: In the quiet of the morning prayer bells, I made peace with every chapter.",
+        act3: "Act 3: The world is wide. Your soul is limitless. Wander freely."
+      },
+      {
+        id: "travel_on_budget",
+        name: "Travel on a Budget",
+        icon: "wallet",
+        color: "emerald",
+        desc: "Affordable discoveries, street food wins, transport savings, and luxury views for local prices.",
+        hook: "Luxury views, street prices: how to do this for under £25 a day.",
+        act1: "Act 1: Skip the tourist cafes—the real magic is following the locals down the alleyways.",
+        act2: "Act 2: £1.80 Pho, a £12 guesthouse with balcony views, and memories money can't buy.",
+        act3: "Act 3: Proof that an unforgettable adventure doesn't need an unforgettable price tag."
+      },
+      {
+        id: "adventure_edit",
+        name: "The Adventure Edit",
+        icon: "mountain",
+        color: "amber",
+        desc: "Exciting, energetic, and discovery-focused. Off-the-beaten-path trails, detours, and wild nature.",
+        hook: "3 miles past where the paved road ends: this is where the magic lives.",
+        act1: "Act 1: My boots are caked in mud and my phone battery just hit 4%.",
+        act2: "Act 2: Standing on the edge of the pass watching eagles circle below us.",
+        act3: "Act 3: Say yes to the spontaneous detour. Life begins outside the comfort zone."
+      },
+      {
+        id: "wish_i_knew",
+        name: "Wish I Knew This Before",
+        icon: "help-circle",
+        color: "indigo",
+        desc: "Practical lessons, smarter packing, transit shortcuts, and avoiding common travel blunders.",
+        hook: "What nobody tells you before visiting here (save this first!).",
+        act1: "Act 1: Always check the ferry timetable before falling in love with a secluded bay.",
+        act2: "Act 2: Pack half the clothes and twice the local cash. Offline maps are your best friend.",
+        act3: "Act 3: Travel smarter, not harder. Save this for your upcoming trip!"
+      },
+      {
+        id: "worth_it_overhyped",
+        name: "Worth It or Overhyped?",
+        icon: "scale",
+        color: "rose",
+        desc: "Balanced, honest, and refreshingly real. What was genuinely worth the money and what to skip.",
+        hook: "Is this famous destination actually worth the hype? The honest truth.",
+        act1: "Act 1: The Instagram photo looked peaceful. The reality was 400 selfie sticks.",
+        act2: "Act 2: But walk 10 minutes past the viewpoint, and the sacred beauty returns completely.",
+        act3: "Act 3: Verdict: Worth it at 6:30 AM, skip by midday. Spend your afternoon at the local market."
+      },
+      {
+        id: "hidden_gems",
+        name: "Hidden Gems",
+        icon: "gem",
+        color: "emerald",
+        desc: "Lesser-known spots, quiet corners, and authentic encounters away from crowds.",
+        hook: "The secret viewpoint you won't find on the typical tourist map.",
+        act1: "Act 1: The tour buses all turn left. We took the gravel path to the right.",
+        act2: "Act 2: A family-run tea stall overlooking an emerald canyon without a single crowd.",
+        act3: "Act 3: The best places don't shout. They wait for curious wanderers to find them."
+      },
+      {
+        id: "real_diaries",
+        name: "Real Travel Diaries",
+        icon: "book-open",
+        color: "amber",
+        desc: "Candid stories from actual experiences. The messy, beautiful, unscripted reality of wandering.",
+        hook: "Not every travel day is glamorous—some are pure comedy.",
+        act1: "Act 1: Lost luggage, a missed night train, and pouring rain at midnight.",
+        act2: "Act 2: Yet here we are sharing fresh noodles and laughing until our sides ache.",
+        act3: "Act 3: Real travel isn't about perfection; it's about presence. Live fully."
+      },
+      {
+        id: "expectation_vs_reality",
+        name: "Expectation vs Reality",
+        icon: "split",
+        color: "rose",
+        desc: "Relatable and funny travel moments. Laughing at influencer clichés versus genuine boots-on-the-ground travel.",
+        hook: "Expectation: Serene spiritual meditation. Reality: Curious monkeys stealing my hat.",
+        act1: "Act 1: The brochure promised silent serenity in the sacred gardens.",
+        act2: "Act 2: Reality had other plans, and honestly, the monkey chase was 100 times funnier.",
+        act3: "Act 3: Don't take life too seriously. Wander freely and laugh at the chaos!"
+      },
+      {
+        id: "one_dest_many",
+        name: "One Place, Many Discoveries",
+        icon: "map-pin",
+        color: "indigo",
+        desc: "A rich mix of food, culture, scenic spots, and local interactions in one dynamic reel.",
+        hook: "24 hours in this sacred town: food, mountains, and soul.",
+        act1: "Act 1: Morning: steamy £2 broth and market banter with vegetable sellers.",
+        act2: "Act 2: Afternoon: quiet mountain trails and ancient cedar forests.",
+        act3: "Act 3: Evening: golden hour reflections. One day, a lifetime of memories."
+      },
+      {
+        id: "little_moments",
+        name: "Little Moments, Big Memories",
+        icon: "heart",
+        color: "rose",
+        desc: "Spontaneous, heartfelt micro-moments. A cup of tea, an unexpected smile, a quiet sunset.",
+        hook: "It’s never the big monuments you remember the most.",
+        act1: "Act 1: It was the cup of ginger tea handed to me when I was shivering on the bus.",
+        act2: "Act 2: It was the golden light filtering through the kitchen window in a rural homestay.",
+        act3: "Act 3: The world is full of kindness. You just have to slow down enough to see it."
+      },
+      {
+        id: "ultimate_tip",
+        name: "The Ultimate Travel Tip",
+        icon: "lightbulb",
+        color: "amber",
+        desc: "One clear, actionable piece of advice that makes journeys easier, cheaper, or more enjoyable.",
+        hook: "The single best travel rule I live by (and it will save you money).",
+        act1: "Act 1: Stop eating within three blocks of major landmarks.",
+        act2: "Act 2: Walk where the local workers go for lunch. Better food, half the price, zero tourist tax.",
+        act3: "Act 3: See more. Spend smarter. Bookmark this for your next trip!"
+      }
+    ];
+
+    let currentFormat = REEL_FORMATS[0];
+
+    // Authentic Worldwide Travel Moments
+    const SAMPLE_EXPEDITIONS = {
+      nepal: [
+        { url: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1080&q=80", caption: "Sunrise on the Annapurna Ridge" },
+        { url: "https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?auto=format&fit=crop&w=1080&q=80", caption: "Monastery prayer bells in morning mist" },
+        { url: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1080&q=80", caption: "The gravel road where our jeep broke down" },
+        { url: "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1080&q=80", caption: "Hot sweet milk tea and belly laughs" }
+      ],
+      vietnam: [
+        { url: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1080&q=80", caption: "Fresh morning coffee in the Hanoi Old Quarter" },
+        { url: "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1080&q=80", caption: "The £1.80 Pho stall with tiny plastic stools" },
+        { url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1080&q=80", caption: "High mountain road through karst limestone passes" },
+        { url: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=1080&q=80", caption: "Watching sunset over emerald rice terraces" }
+      ]
+    };
+
+    let loadedImageElements = [];
+
+    // --- 2. INITIALIZATION ---
+    window.addEventListener("DOMContentLoaded", () => {
+      renderFormatButtons();
+      loadSampleExpedition('vietnam');
+      updateAudioVibe();
+    });
+
+    function renderFormatButtons() {
+      const grid = document.getElementById("format-selector-grid");
+      grid.innerHTML = "";
+
+      REEL_FORMATS.forEach((fmt) => {
+        const btn = document.createElement("button");
+        const isActive = fmt.id === currentFormat.id;
+        btn.className = `p-2.5 rounded-xl border text-left transition flex items-center space-x-2 text-xs font-semibold ${
+          isActive 
+            ? "bg-amber-500/20 border-amber-500/50 text-amber-200 shadow-sm" 
+            : "bg-adventurer-card border-adventurer-border text-slate-300 hover:border-slate-600 hover:text-white"
+        }`;
+        btn.innerHTML = `
+          <i data-lucide="${fmt.icon}" class="w-3.5 h-3.5 shrink-0 ${isActive ? 'text-amber-400' : 'text-slate-400'}"></i>
+          <span class="truncate">${fmt.name}</span>
+        `;
+        btn.onclick = () => selectFormat(fmt.id);
+        grid.appendChild(btn);
+      });
+      lucide.createIcons();
+    }
+
+    function selectFormat(id) {
+      currentFormat = REEL_FORMATS.find(f => f.id === id) || REEL_FORMATS[0];
+      
+      // Update format banner
+      document.getElementById("format-title").innerText = currentFormat.name;
+      document.getElementById("format-desc").innerText = currentFormat.desc;
+
+      // Populate editable inputs with format templates
+      document.getElementById("reelHookInput").value = currentFormat.hook;
+      document.getElementById("act1Subtitle").value = currentFormat.act1;
+      document.getElementById("act2Subtitle").value = currentFormat.act2;
+      document.getElementById("act3Subtitle").value = currentFormat.act3;
+
+      renderFormatButtons();
+      renderOverlayText();
+      generateCaptionPreview();
+    }
+
+    function loadSampleExpedition(key) {
+      photos = [...SAMPLE_EXPEDITIONS[key]];
+      if (key === 'nepal') {
+        document.getElementById("destinationInput").value = "Annapurna Circuit, Nepal";
+        document.getElementById("budgetDetailInput").value = "£18 ($23) a day total with mountain homestay meals";
+        document.getElementById("adventureNotes").value = "Missed the mountain jeep, hitchhiked with a potato farmer, drank sweet tea at 3,800m while laughing over wild road stories.";
+        document.getElementById("lessonNotes").value = "The fear is only in the waiting. Once your boots hit the trail, courage takes over.";
+      } else {
+        document.getElementById("destinationInput").value = "Hanoi & Ha Giang Loop, Vietnam";
+        document.getElementById("budgetDetailInput").value = "£1.80 Pho bowls, £14 sleeper bus with mountain views";
+        document.getElementById("adventureNotes").value = "Rented a small motorbike, stalled on a bridge for ducks, ate the best noodles of my life on tiny plastic stools.";
+        document.getElementById("lessonNotes").value = "Never judge a meal by the furniture. The smaller the plastic stool, the better the broth.";
+      }
+
+      renderGallery();
+      preloadImages();
+      renderOverlayText();
+    }
+
+    function renderGallery() {
+      const container = document.getElementById("galleryContainer");
+      document.getElementById("photo-count-badge").innerText = `${photos.length} photos`;
+      container.innerHTML = "";
+
+      photos.forEach((photo, index) => {
+        const item = document.createElement("div");
+        item.className = "relative group rounded-xl overflow-hidden border border-adventurer-border aspect-[3/4] bg-adventurer-card";
+        item.innerHTML = `
+          <img src="${photo.url}" class="w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center space-x-1 p-1">
+            ${index > 0 ? `<button onclick="movePhoto(${index}, -1)" class="p-1 rounded bg-slate-800 text-white hover:bg-slate-700 text-[10px]">◀</button>` : ''}
+            <button onclick="removePhoto(${index})" class="p-1 rounded bg-rose-600 text-white hover:bg-rose-500 text-[10px]">✕</button>
+            ${index < photos.length - 1 ? `<button onclick="movePhoto(${index}, 1)" class="p-1 rounded bg-slate-800 text-white hover:bg-slate-700 text-[10px]">▶</button>` : ''}
+          </div>
+          <span class="absolute bottom-1 left-1 bg-black/75 px-1.5 py-0.5 rounded text-[9px] font-mono text-amber-300">#${index + 1}</span>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function preloadImages() {
+      loadedImageElements = photos.map(p => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = p.url;
+        return img;
+      });
+      renderCanvasFrame(0);
+    }
+
+    function movePhoto(index, direction) {
+      const target = index + direction;
+      if (target >= 0 && target < photos.length) {
+        const temp = photos[index];
+        photos[index] = photos[target];
+        photos[target] = temp;
+        renderGallery();
+        preloadImages();
+      }
+    }
+
+    function removePhoto(index) {
+      if (photos.length <= 1) {
+        alert("Keep at least one photo for your Reel timeline.");
+        return;
+      }
+      photos.splice(index, 1);
+      renderGallery();
+      preloadImages();
+    }
+
+    function clearAllPhotos() {
+      if (confirm("Clear current photos? You can load sample expeditions anytime.")) {
+        photos = [];
+        renderGallery();
+      }
+    }
+
+    function handleFileUpload(event) {
+      const files = event.target.files;
+      if (!files.length) return;
+
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          photos.push({
+            url: e.target.result,
+            caption: file.name.replace(/\.[^/.]+$/, "")
+          });
+          renderGallery();
+          preloadImages();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function handleConnectGooglePhotos() {
+      toggleSetupModal(true);
+    }
+
+    function toggleSetupModal(show) {
+      document.getElementById("googlePhotosModal").classList.toggle("hidden", !show);
+      lucide.createIcons();
+    }
+
+    // --- 3. FOREVERADVENTURER AI DIRECTOR LOGIC ---
+    function directReelWithAI() {
+      const dest = document.getElementById("destinationInput").value;
+      const budget = document.getElementById("budgetDetailInput").value;
+      const notes = document.getElementById("adventureNotes").value;
+      const lesson = document.getElementById("lessonNotes").value;
+
+      // Generate distinctive, context-specific hooks and 3-act narratives
+      let hook = currentFormat.hook;
+      let act1 = currentFormat.act1;
+      let act2 = currentFormat.act2;
+      let act3 = currentFormat.act3;
+
+      if (currentFormat.id === "travel_on_budget" && budget) {
+        hook = `How to experience ${dest} for ${budget.split(',')[0] || 'peanuts'}.`;
+        act1 = "Act 1: Forget the overpriced tourist street—wander two blocks back.";
+        act2 = `Act 2: ${budget ? budget + ' and unforgettable local warmth.' : 'Unreal local food and boutique stays for local rates.'}`;
+        act3 = "Act 3: Proof that an unforgettable adventure doesn't need an unforgettable price tag.";
+      } else if (currentFormat.id === "the_cheeky_traveller" || currentFormat.id === "expectation_vs_reality") {
+        hook = `Came to ${dest} for the peaceful views. Stayed because I got wonderfully lost.`;
+        act1 = `Act 1: ${notes ? notes.slice(0, 75) + '...' : 'When Google Maps says it is a gentle walk and it is a vertical goat track.'}`;
+        act2 = "Act 2: But then the tea arrives, the laughing starts, and you realise the wrong turns are the point.";
+        act3 = "Act 3: Not every travel day is polished. Some are just you and a brilliant memory.";
+      } else if (currentFormat.id === "soulful_journey") {
+        hook = `In the quiet of ${dest}: what the silence taught me.`;
+        act1 = "Act 1: I packed one bag and left the noise of routine behind.";
+        act2 = `Act 2: ${lesson ? lesson.slice(0, 85) + '...' : 'Standing before ancient traditions, I realised how small my worries really were.'}`;
+        act3 = "Act 3: The world is wide. Your soul is limitless. Wander freely.";
+      } else {
+        hook = `${dest}: the story you don’t see in the brochures.`;
+        act1 = `Act 1: ${notes ? notes.slice(0, 70) : 'Stepping off the beaten path where real life happens.'}`;
+        act2 = `Act 2: ${lesson ? lesson.slice(0, 80) : 'Great food, genuine conversations, and zero influencer crowds.'}`;
+        act3 = "Act 3: See more. Spend smarter. Laugh often. Wander freely.";
+      }
+
+      document.getElementById("reelHookInput").value = hook;
+      document.getElementById("act1Subtitle").value = act1;
+      document.getElementById("act2Subtitle").value = act2;
+      document.getElementById("act3Subtitle").value = act3;
+
+      renderOverlayText();
+      generateCaptionPreview();
+    }
+
+    function generateCaptionPreview() {
+      const hook = document.getElementById("reelHookInput").value;
+      const dest = document.getElementById("destinationInput").value;
+      const budget = document.getElementById("budgetDetailInput").value;
+      const act2 = document.getElementById("act2Subtitle").value;
+      const lesson = document.getElementById("lessonNotes").value;
+
+      const caption = `${hook}\n\n${act2}\n\n${lesson ? '💡 Real takeaway: ' + lesson + '\n\n' : ''}${budget ? '💰 Budget check: ' + budget + '\n\n' : ''}📍 ${dest}\n🌿 "See more. Spend smarter. Laugh often. Wander freely. Live fully."\n\nSave this for your next spontaneous journey! ✨\n\n#ForeverAdventurer #RealTravel #TravelHacks #BudgetTravel #HiddenGems #SpontaneousTravel #WanderFreely #TravelDiaries #TravelReels`;
+
+      document.getElementById("igCaptionTextarea").value = caption;
+      document.getElementById("igOverlaySnippet").innerText = hook;
+    }
+
+    function copyCaptionToClipboard() {
+      const text = document.getElementById("igCaptionTextarea").value;
+      navigator.clipboard.writeText(text);
+      alert("Instagram Reel caption copied to clipboard!");
+    }
+
+    function copyProductionKit() {
+      const hook = document.getElementById("reelHookInput").value;
+      const act1 = document.getElementById("act1Subtitle").value;
+      const act2 = document.getElementById("act2Subtitle").value;
+      const act3 = document.getElementById("act3Subtitle").value;
+      const caption = document.getElementById("igCaptionTextarea").value;
+
+      const kit = `=== FOREVERADVENTURER REEL PRODUCTION KIT ===\nFORMAT: ${currentFormat.name}\nHOOK: ${hook}\n\n[00:00 - 00:08] ${act1}\n[00:08 - 00:22] ${act2}\n[00:22 - 00:${reelDuration}] ${act3}\n\nCAPTION & HASHTAGS:\n${caption}`;
+      navigator.clipboard.writeText(kit);
+      alert("Full Production Kit copied to clipboard!");
+    }
+
+    // --- 4. 9:16 CANVAS ENGINE (KEN BURNS & SUBTITLES) ---
+    const canvas = document.getElementById("reelCanvas");
+    const ctx = canvas.getContext("2d");
+
+    function renderCanvasFrame(time) {
+      if (!loadedImageElements.length) {
+        ctx.fillStyle = "#131921";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#f59e0b";
+        ctx.font = "bold 32px 'Plus Jakarta Sans'";
+        ctx.textAlign = "center";
+        ctx.fillText("Upload Photos to Begin Reel", canvas.width / 2, canvas.height / 2);
+        return;
+      }
+
+      const totalPhotos = loadedImageElements.length;
+      const timePerPhoto = reelDuration / totalPhotos;
+      const currentPhotoIndex = Math.min(Math.floor(time / timePerPhoto), totalPhotos - 1);
+      const nextPhotoIndex = (currentPhotoIndex + 1) % totalPhotos;
+      const img = loadedImageElements[currentPhotoIndex];
+      const nextImg = loadedImageElements[nextPhotoIndex];
+
+      const photoProgress = (time % timePerPhoto) / timePerPhoto;
+
+      // Clear Canvas
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw current image with Ken Burns zoom (1.0 to 1.14)
+      if (img && img.complete) {
+        const scale = 1.0 + (photoProgress * 0.14);
+        const panX = Math.sin(photoProgress * Math.PI) * 12;
+
+        ctx.save();
+        ctx.translate(canvas.width / 2 + panX, canvas.height / 2);
+        ctx.scale(scale, scale);
+
+        drawImageAspectFill(ctx, img, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
+        ctx.restore();
+      }
+
+      // Smooth cross-dissolve transition in the last 15% of each cut
+      const dissolveThreshold = 0.85;
+      if (photoProgress > dissolveThreshold && nextImg && nextImg.complete) {
+        const alpha = (photoProgress - dissolveThreshold) / (1.0 - dissolveThreshold);
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        drawImageAspectFill(ctx, nextImg, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
+        ctx.restore();
+      }
+
+      // Bottom Dark Gradient for Instagram Text Legibility
+      const grad = ctx.createLinearGradient(0, canvas.height * 0.38, 0, canvas.height);
+      grad.addColorStop(0, "rgba(0,0,0,0)");
+      grad.addColorStop(0.65, "rgba(0,0,0,0.55)");
+      grad.addColorStop(1, "rgba(0,0,0,0.88)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Active Subtitle Sequence
+      let activeText = "";
+      const hookText = document.getElementById("reelHookInput").value;
+      const act1 = document.getElementById("act1Subtitle").value;
+      const act2 = document.getElementById("act2Subtitle").value;
+      const act3 = document.getElementById("act3Subtitle").value;
+
+      if (time < 3.2) {
+        activeText = hookText;
+      } else if (time < reelDuration * 0.38) {
+        activeText = act1;
+      } else if (time < reelDuration * 0.75) {
+        activeText = act2;
+      } else {
+        activeText = act3;
+      }
+
+      // Render Cinematic On-Screen Subtitle Box
+      if (activeText) {
+        ctx.save();
+        ctx.font = "bold 34px 'Plus Jakarta Sans', sans-serif";
+        ctx.fillStyle = "#FFFFFF";
+        ctx.textAlign = "center";
+        ctx.shadowColor = "rgba(0,0,0,0.95)";
+        ctx.shadowBlur = 14;
+
+        wrapCanvasText(ctx, activeText, canvas.width / 2, canvas.height * 0.66, canvas.width * 0.86, 46);
+        ctx.restore();
+      }
+
+      document.getElementById("igOverlaySnippet").innerText = activeText;
+    }
+
+    function drawImageAspectFill(ctx, img, x, y, w, h) {
+      const imgRatio = img.width / img.height;
+      const canvasRatio = w / h;
+      let sX, sY, sW, sH;
+
+      if (imgRatio > canvasRatio) {
+        sH = img.height;
+        sW = img.height * canvasRatio;
+        sX = (img.width - sW) / 2;
+        sY = 0;
+      } else {
+        sW = img.width;
+        sH = img.width / canvasRatio;
+        sX = 0;
+        sY = (img.height - sH) / 2;
+      }
+      ctx.drawImage(img, sX, sY, sW, sH, x, y, w, h);
+    }
+
+    function wrapCanvasText(context, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(" ");
+      let line = "";
+      let lines = [];
+
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + " ";
+        const metrics = context.measureText(testLine);
+        if (metrics.width > maxWidth && n > 0) {
+          lines.push(line);
+          line = words[n] + " ";
+        } else {
+          line = testLine;
+        }
+      }
+      lines.push(line);
+
+      for (let k = 0; k < lines.length; k++) {
+        context.fillText(lines[k].trim(), x, y + (k * lineHeight));
+      }
+    }
+
+    function renderOverlayText() {
+      renderCanvasFrame(currentTime);
+      generateCaptionPreview();
+    }
+
+    // --- 5. TIMELINE CONTROLS & WEB AUDIO SYNTHESIZER ---
+    function togglePlay() {
+      if (isPlaying) {
+        pause();
+      } else {
+        play();
+      }
+    }
+
+    let lastFrameTime = 0;
+    function play() {
+      isPlaying = true;
+      initAudioEngine();
+      updatePlayIcons(true);
+      lastFrameTime = performance.now();
+      loop(lastFrameTime);
+    }
+
+    function pause() {
+      isPlaying = false;
+      updatePlayIcons(false);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    }
+
+    function updatePlayIcons(playing) {
+      document.getElementById("playIcon").setAttribute("data-lucide", playing ? "pause" : "play");
+      document.getElementById("centerPlayIcon").setAttribute("data-lucide", playing ? "pause" : "play");
+      lucide.createIcons();
+    }
+
+    function loop(now) {
+      if (!isPlaying) return;
+      const delta = (now - lastFrameTime) / 1000;
+      lastFrameTime = now;
+
+      currentTime += delta;
+      if (currentTime >= reelDuration) {
+        currentTime = 0;
+      }
+
+      renderCanvasFrame(currentTime);
+      updateTimelineUI();
+
+      animationFrameId = requestAnimationFrame(loop);
+    }
+
+    function updateTimelineUI() {
+      const pct = (currentTime / reelDuration) * 100;
+      document.getElementById("timelineProgressBar").style.width = pct + "%";
+
+      const formatSec = (s) => "00:" + String(Math.floor(s)).padStart(2, '0');
+      document.getElementById("timecodeDisplay").innerText = `${formatSec(currentTime)} / ${formatSec(reelDuration)}`;
+    }
+
+    function setReelDuration(seconds) {
+      reelDuration = seconds;
+      ['15', '30', '60'].forEach(s => {
+        const btn = document.getElementById(`dur-${s}`);
+        if (parseInt(s) === seconds) {
+          btn.className = "py-1 rounded-lg text-[11px] font-bold bg-amber-500 text-slate-950 shadow";
+        } else {
+          btn.className = "py-1 rounded-lg text-[11px] font-semibold text-slate-400";
+        }
+      });
+      currentTime = 0;
+      updateTimelineUI();
+      renderCanvasFrame(0);
+    }
+
+    function initAudioEngine() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+    }
+
+    function toggleAudio() {
+      isAudioActive = !isAudioActive;
+      document.getElementById("audioIcon").setAttribute("data-lucide", isAudioActive ? "volume-2" : "volume-x");
+      lucide.createIcons();
+      if (isAudioActive) {
+        initAudioEngine();
+        playHarmonicNotes();
+      } else {
+        if (audioInterval) clearInterval(audioInterval);
+      }
+    }
+
+    function playTone(freq, dur) {
+      if (!audioContext || !isAudioActive) return;
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+
+      gain.gain.setValueAtTime(0.01, audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.06, audioContext.currentTime + 0.3);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + dur);
+
+      osc.connect(gain);
+      gain.connect(audioContext.destination);
+
+      osc.start();
+      osc.stop(audioContext.currentTime + dur);
+    }
+
+    function playHarmonicNotes() {
+      if (audioInterval) clearInterval(audioInterval);
+      playTone(261.63, 4); // C4
+      audioInterval = setInterval(() => {
+        if (!isPlaying || !isAudioActive) return;
+        const chords = [261.63, 293.66, 329.63, 392.00];
+        const randomNote = chords[Math.floor(Math.random() * chords.length)];
+        playTone(randomNote, 3.5);
+      }, 3500);
+    }
+
+    function updateAudioVibe() {
+      const sel = document.getElementById("musicTrackSelect").value;
+      const trackLabels = {
+        upbeat_indie: "Cheeky Indie Wanderer &bull; Original Audio",
+        acoustic_strings: "Soulful Acoustic Strings &bull; Original Audio",
+        meditation_chimes: "Tibetan Chimes & Ocean Waves &bull; Original Audio",
+        cinematic_strings: "Cinematic Golden Hour &bull; Original Audio"
+      };
+      document.getElementById("igOverlayTrackName").innerHTML = trackLabels[sel] || "Original Audio";
+    }
+
+    // --- 6. VIDEO EXPORT (IN-BROWSER RECORDER) ---
+    function recordAndExportVideo() {
+      pause();
+      currentTime = 0;
+
+      const btn = document.getElementById("exportVideoBtn");
+      const label = document.getElementById("exportBtnLabel");
+
+      btn.disabled = true;
+      label.innerText = "Exporting (Please wait)...";
+
+      const stream = canvas.captureStream(30);
+      let recorder;
+      try {
+        recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+      } catch (e) {
+        recorder = new MediaRecorder(stream);
+      }
+
+      const chunks = [];
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `ForeverAdventurer_${currentFormat.id}_${Date.now()}.webm`;
+        a.click();
+
+        btn.disabled = false;
+        label.innerText = "Export Reel MP4";
+        alert("Your 9:16 ForeverAdventurer Reel has been exported successfully!");
+      };
+
+      recorder.start();
+      play();
+
+      setTimeout(() => {
+        recorder.stop();
+        pause();
+      }, (reelDuration * 1000) + 300);
+    }
+  </script>
+</body>
+</html>
