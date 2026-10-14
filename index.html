@@ -6,25 +6,25 @@
   <title>ForeverAdventurer — Real Travel, Real Fun, Real Life IG Reels Creator</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .font-serif-title { font-family: 'Playfair Display', serif; }
-    .reel-viewport {
-      aspect-ratio: 9 / 16;
-      max-height: 720px;
-    }
-    .ig-overlay-safezone {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-    }
+    .ratio-9-16 { aspect-ratio: 9 / 16; }
+    .ratio-4-5  { aspect-ratio: 4 / 5; }
+    .ratio-1-1  { aspect-ratio: 1 / 1; }
+    .ratio-16-9 { aspect-ratio: 16 / 9; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0c0a09; }
+    ::-webkit-scrollbar-thumb { background: #292524; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #d97706; }
   </style>
 </head>
 <body class="bg-stone-950 text-stone-100 min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-black">
 
-  <!-- TOP HEADER -->
-  <header class="border-b border-stone-800/80 bg-stone-900/60 backdrop-blur sticky top-0 z-40 px-6 py-4 flex items-center justify-between">
+  <header class="border-b border-stone-800/80 bg-stone-900/70 backdrop-blur sticky top-0 z-40 px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
     <div class="flex items-center space-x-3">
       <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center shadow-lg shadow-rose-950/40">
         <i data-lucide="compass" class="w-6 h-6 text-white stroke-[2.5]"></i>
@@ -32,251 +32,392 @@
       <div>
         <div class="flex items-center space-x-2">
           <span class="text-xl font-extrabold tracking-tight text-white">ForeverAdventurer</span>
-          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 via-rose-500/20 to-purple-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-widest">REAL TRAVEL • REAL FUN • REAL LIFE</span>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 via-rose-500/20 to-purple-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-widest">REAL TRAVEL STUDIO</span>
         </div>
-        <p class="text-xs text-stone-400">“The world is wide. Your soul is limitless.” • See more. Spend smarter. Laugh often. Wander freely. Live fully.</p>
+        <p class="text-xs text-stone-400 hidden sm:block">“The world is wide. Your soul is limitless.” • See more. Spend smarter. Laugh often.</p>
       </div>
     </div>
-
-    <div class="flex items-center space-x-3">
-      <button onclick="toggleSetupModal(true)" class="flex items-center space-x-2 text-xs font-semibold px-3.5 py-2 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700 transition">
-        <i data-lucide="shield" class="w-4 h-4 text-amber-400"></i>
-        <span>Google Photos Setup</span>
+    <div class="flex items-center space-x-2">
+      <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-emerald-950/60 border border-emerald-800/60 text-emerald-400 text-[11px] font-semibold">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>100% Client-Side Engine</span>
+      </div>
+      <button onclick="toggleSetupModal(true)" class="flex items-center space-x-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-stone-800 hover:bg-stone-750 text-stone-200 border border-stone-700 transition">
+        <i data-lucide="shield" class="w-3.5 h-3.5 text-amber-400"></i>
+        <span>Photos Setup</span>
       </button>
-      <button onclick="copyProductionKit()" class="flex items-center space-x-2 text-xs font-semibold px-3.5 py-2 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700 transition">
-        <i data-lucide="copy" class="w-4 h-4 text-stone-300"></i>
-        <span>Copy Kit</span>
+      <button onclick="copyProductionKit()" class="flex items-center space-x-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-stone-800 hover:bg-stone-750 text-stone-200 border border-stone-700 transition">
+        <i data-lucide="copy" class="w-3.5 h-3.5 text-stone-300"></i>
+        <span>Brand Kit</span>
       </button>
     </div>
   </header>
 
-  <!-- MAIN STUDIO LAYOUT -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-    
-    <!-- LEFT PANEL: CREATIVE CONTROLS -->
-    <div class="lg:col-span-7 space-y-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="lg:col-span-7 space-y-5">
 
-      <!-- STEP 1: IMPORT TRAVEL MEMORIES -->
-      <section class="bg-stone-900/80 border border-stone-800 rounded-2xl p-5 shadow-xl">
-        <div class="flex items-center justify-between mb-4 pb-3 border-b border-stone-800">
+      <!-- SECTION 1: ASPECT RATIO & DURATION -->
+      <section class="bg-stone-900/80 border border-stone-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3">
+        <div class="flex items-center justify-between pb-2.5 border-b border-stone-800">
           <div class="flex items-center space-x-2">
             <span class="w-6 h-6 rounded-full bg-amber-500 text-black text-xs font-black flex items-center justify-center">1</span>
-            <h2 class="text-sm font-bold uppercase tracking-wider text-stone-200">Personal Travel Footage</h2>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-stone-200">Format Ratio & Duration</h2>
           </div>
-          <span class="text-xs text-amber-400 font-semibold"><span id="photoCountBadge">4</span> photos</span>
+          <span class="text-xs text-amber-400 font-semibold" id="activeFormatBadge">9:16 IG Reel</span>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-          <button onclick="toggleSetupModal(true)" class="flex items-center justify-center space-x-2 p-3.5 rounded-xl bg-white hover:bg-stone-100 text-stone-900 font-bold text-xs transition shadow-md group">
-            <svg class="w-4 h-4" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.28v3.15C3.27 21.32 7.35 24 12 24z"/>
-              <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.28C.46 8.21 0 10.05 0 12s.46 3.79 1.28 5.42l4-3.15z"/>
-              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.27 2.68 1.28 6.58l4 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-            </svg>
-            <span class="group-hover:text-amber-600 transition">Connect Google Photos</span>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <button onclick="setAspectRatio('9:16')" id="ratioBtn-9-16" class="p-2.5 rounded-xl border border-amber-500 bg-amber-500/10 text-amber-300 font-bold text-xs flex flex-col items-center justify-center transition">
+            <i data-lucide="smartphone" class="w-4 h-4 mb-1"></i>
+            <span>9:16 Reels/TikTok</span>
           </button>
+          <button onclick="setAspectRatio('4:5')" id="ratioBtn-4-5" class="p-2.5 rounded-xl border border-stone-800 bg-stone-950 text-stone-400 font-bold text-xs flex flex-col items-center justify-center hover:text-white transition">
+            <i data-lucide="rectangle-vertical" class="w-4 h-4 mb-1"></i>
+            <span>4:5 Facebook Feed</span>
+          </button>
+          <button onclick="setAspectRatio('1:1')" id="ratioBtn-1-1" class="p-2.5 rounded-xl border border-stone-800 bg-stone-950 text-stone-400 font-bold text-xs flex flex-col items-center justify-center hover:text-white transition">
+            <i data-lucide="square" class="w-4 h-4 mb-1"></i>
+            <span>1:1 Square</span>
+          </button>
+          <button onclick="setAspectRatio('16:9')" id="ratioBtn-16-9" class="p-2.5 rounded-xl border border-stone-800 bg-stone-950 text-stone-400 font-bold text-xs flex flex-col items-center justify-center hover:text-white transition">
+            <i data-lucide="tv" class="w-4 h-4 mb-1"></i>
+            <span>16:9 YouTube</span>
+          </button>
+        </div>
 
-          <label class="flex items-center justify-center space-x-2 p-3.5 rounded-xl bg-stone-800 hover:bg-stone-750 text-stone-200 border border-stone-700 cursor-pointer font-bold text-xs transition">
-            <i data-lucide="upload" class="w-4 h-4 text-amber-400"></i>
+        <div class="pt-2">
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1.5">Reel Timing</label>
+          <div class="grid grid-cols-5 gap-1.5 p-1 bg-stone-950 border border-stone-800 rounded-xl">
+            <button onclick="setDuration(5)" id="dur-5" class="py-1.5 rounded-lg text-xs font-bold text-stone-400 hover:text-white transition">5s Micro</button>
+            <button onclick="setDuration(7)" id="dur-7" class="py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-black shadow transition">7s Micro</button>
+            <button onclick="setDuration(15)" id="dur-15" class="py-1.5 rounded-lg text-xs font-bold text-stone-400 hover:text-white transition">15s Classic</button>
+            <button onclick="setDuration(30)" id="dur-30" class="py-1.5 rounded-lg text-xs font-bold text-stone-400 hover:text-white transition">30s Narrative</button>
+            <button onclick="setDuration(60)" id="dur-60" class="py-1.5 rounded-lg text-xs font-bold text-stone-400 hover:text-white transition">60s Vlog</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: PHOTO MANAGEMENT & FOCAL ANCHOR -->
+      <section class="bg-stone-900/80 border border-stone-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3">
+        <div class="flex items-center justify-between pb-2.5 border-b border-stone-800">
+          <div class="flex items-center space-x-2">
+            <span class="w-6 h-6 rounded-full bg-amber-500 text-black text-xs font-black flex items-center justify-center">2</span>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-stone-200">Photos & Focal Framing (No Cropped Heads)</h2>
+          </div>
+          <span class="text-xs text-amber-400 font-semibold"><span id="photoCountBadge">4</span> Loaded</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <label class="flex items-center justify-center space-x-2 p-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs cursor-pointer shadow-lg transition">
+            <i data-lucide="upload" class="w-4 h-4"></i>
             <span>Upload High-Res Photos</span>
             <input type="file" id="localFileInput" multiple accept="image/*" class="hidden" onchange="handleFileUpload(event)">
           </label>
+          <button onclick="toggleSetupModal(true)" class="flex items-center justify-center space-x-2 p-3 rounded-xl bg-stone-800 hover:bg-stone-750 text-stone-200 border border-stone-700 text-xs font-bold transition">
+            <i data-lucide="cloud" class="w-4 h-4 text-amber-400"></i>
+            <span>Google Photos Connect</span>
+          </button>
         </div>
 
-        <div class="flex items-center space-x-2 p-2.5 rounded-lg bg-emerald-950/30 border border-emerald-800/40 text-emerald-400 text-[11px] mb-4">
-          <i data-lucide="shield-check" class="w-4 h-4 shrink-0 text-emerald-400"></i>
-          <span><strong>Authenticity Guarantee:</strong> Your original photos retain their real facial features, skin texture, and expressions. Zero fake beauty filters or artificial smoothing.</span>
+        <div class="flex items-center justify-between text-xs text-stone-400 pt-1">
+          <span>Presets:</span>
+          <div class="flex items-center space-x-2 text-[11px]">
+            <button onclick="loadSample('bangkok')" class="text-amber-400 hover:underline">Bangkok & Bumblebee</button>
+            <span class="text-stone-700">&bull;</span>
+            <button onclick="loadSample('nepal')" class="text-amber-400 hover:underline">Nepal</button>
+            <span class="text-stone-700">&bull;</span>
+            <button onclick="loadSample('vietnam')" class="text-amber-400 hover:underline">Vietnam</button>
+            <span class="text-stone-700">&bull;</span>
+            <button onclick="clearPhotos()" class="text-rose-400 hover:underline">Clear</button>
+          </div>
         </div>
 
-        <div>
-          <div class="flex items-center justify-between text-xs text-stone-400 mb-2">
-            <span>Reel Sequence (Arranged left to right):</span>
-            <div class="flex items-center space-x-3">
-              <button onclick="loadSample('nepal')" class="text-amber-400 hover:underline">Sample 1: Nepal</button>
-              <span class="text-stone-600">&bull;</span>
-              <button onclick="loadSample('vietnam')" class="text-amber-400 hover:underline">Sample 2: Vietnam Street Eats</button>
-              <span class="text-stone-600">&bull;</span>
-              <button onclick="clearPhotos()" class="text-rose-400 hover:underline">Clear</button>
-            </div>
-          </div>
-          <div id="galleryContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2 min-h-[100px] p-2 bg-stone-950 rounded-xl border border-stone-800/80">
-          </div>
-        </div>
+        <div id="galleryContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-2 bg-stone-950 rounded-xl border border-stone-800/80 min-h-[120px]"></div>
       </section>
 
-      <!-- STEP 2: 12 REEL STORYTELLING FORMATS -->
-      <section class="bg-stone-900/80 border border-stone-800 rounded-2xl p-5 shadow-xl space-y-3">
-        <div class="flex items-center justify-between pb-3 border-b border-stone-800">
-          <div class="flex items-center space-x-2">
-            <span class="w-6 h-6 rounded-full bg-amber-500 text-black text-xs font-black flex items-center justify-center">2</span>
-            <h2 class="text-sm font-bold uppercase tracking-wider text-stone-200">Reel Format & Storytelling Angle</h2>
-          </div>
-          <span class="text-xs text-amber-400 font-semibold">12 Formats Available</span>
-        </div>
-
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="formatPillsContainer">
-          <!-- Dynamically populated formats -->
-        </div>
-      </section>
-
-      <!-- STEP 3: DESTINATION CONTEXT & BUDGET WIN -->
-      <section class="bg-stone-900/80 border border-stone-800 rounded-2xl p-5 shadow-xl space-y-4">
-        <div class="flex items-center justify-between pb-3 border-b border-stone-800">
+      <!-- SECTION 3: 12 STORYTELLING FORMATS -->
+      <section class="bg-stone-900/80 border border-stone-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3">
+        <div class="flex items-center justify-between pb-2.5 border-b border-stone-800">
           <div class="flex items-center space-x-2">
             <span class="w-6 h-6 rounded-full bg-amber-500 text-black text-xs font-black flex items-center justify-center">3</span>
-            <h2 class="text-sm font-bold uppercase tracking-wider text-stone-200">Destination Context & Reality Check</h2>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-stone-200">Reel Storytelling Formats</h2>
           </div>
-          <span class="text-xs text-stone-400">Ground your reel in real details</span>
+          <span class="text-xs text-amber-400 font-semibold" id="currentFormatNameLabel">The Cheeky Traveller</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="formatPillsContainer"></div>
+      </section>
+
+      <!-- SECTION 4: CONTEXT, TRANSITIONS & CINEMATIC FILTERS -->
+      <section class="bg-stone-900/80 border border-stone-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+        <div class="flex items-center justify-between pb-2.5 border-b border-stone-800">
+          <div class="flex items-center space-x-2">
+            <span class="w-6 h-6 rounded-full bg-amber-500 text-black text-xs font-black flex items-center justify-center">4</span>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-stone-200">Destination Context & Visual Transitions</h2>
+          </div>
+          <span class="text-xs text-stone-400">Cinematic Engine</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold text-stone-400 mb-1">Destination / Location</label>
-            <input id="destField" type="text" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs text-stone-200 focus:border-amber-500 outline-none" value="Bangkok, Thailand (Talat Noi & Chinatown)">
+            <input id="destField" type="text" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs text-stone-200 focus:border-amber-500 outline-none" value="Bangkok, Thailand (Talat Noi)">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-stone-400 mb-1">Bargain Find or Budget Win (£/$)</label>
-            <input id="budgetField" type="text" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs text-stone-200 focus:border-amber-500 outline-none" value="£2 (80 THB) handmade duck noodles + £0 entrance to recycled art alley">
+            <label class="block text-xs font-semibold text-stone-400 mb-1">Budget Win / Bargain Find (£/$)</label>
+            <input id="budgetField" type="text" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs text-stone-200 focus:border-amber-500 outline-none" value="Free scrap metal art trail + £2 duck noodles">
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-stone-400 mb-1">Honest Mishap, Blooper or Funny Observation</label>
-          <input id="mishapField" type="text" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs text-stone-200 focus:border-amber-500 outline-none" value="Looked for a serene zen garden, accidentally walked into a scrap metal garage guarded by a 14ft Transformer robot.">
+          <label class="block text-xs font-semibold text-stone-400 mb-1">Honest Observation, Blooper or Fun Detail</label>
+          <input id="mishapField" type="text" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs text-stone-200 focus:border-amber-500 outline-none" value="Stumbled into an alley and met a 14ft scrap metal Bumblebee sculpture.">
         </div>
 
-        <!-- PRIMARY DIRECT BUTTON WITH ACTIVE STATUS NOTIFIER -->
-        <div class="pt-2">
-          <button id="directReelBtn" onclick="triggerDirectReel()" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 hover:opacity-95 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center space-x-2 shadow-lg shadow-rose-950/40 transition active:scale-[0.99]">
-            <i data-lucide="sparkles" class="w-4 h-4"></i>
-            <span id="directBtnText">✨ DIRECT MY REEL WITH FOREVERADVENTURER VOICE</span>
-          </button>
-          <div id="directedSuccessAlert" class="hidden mt-2 p-2 bg-emerald-950/80 border border-emerald-600/50 rounded-lg text-emerald-300 text-xs font-bold text-center flex items-center justify-center space-x-2">
-            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
-            <span>Reel Directed & Synced to 9:16 Simulator! Check the text and playback below.</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- STEP 4: REEL SCRIPT & SUBTITLES (WITH DURATION SELECTOR 5s, 7s, 15s, 30s, 60s) -->
-      <section class="bg-stone-900/80 border border-stone-800 rounded-2xl p-5 shadow-xl space-y-4">
-        <div class="flex items-center justify-between pb-3 border-b border-stone-800">
-          <div class="flex items-center space-x-2">
-            <span class="w-6 h-6 rounded-full bg-amber-500 text-black text-xs font-black flex items-center justify-center">4</span>
-            <h2 class="text-sm font-bold uppercase tracking-wider text-stone-200">Reel Script & Subtitles</h2>
-          </div>
-          <span class="text-xs text-amber-400 font-semibold">Live Sync Active</span>
-        </div>
-
-        <!-- NEW EXPANDED DURATION SELECTOR -->
-        <div>
-          <label class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1.5">Reel Duration</label>
-          <div class="grid grid-cols-5 gap-1.5 p-1 bg-stone-950 border border-stone-800 rounded-xl" id="durationButtonGroup">
-            <button onclick="setDuration(5)" id="dur-5" class="py-2 rounded-lg text-xs font-bold text-stone-400 hover:text-white transition">5s</button>
-            <button onclick="setDuration(7)" id="dur-7" class="py-2 rounded-lg text-xs font-bold text-stone-400 hover:text-white transition">7s</button>
-            <button onclick="setDuration(15)" id="dur-15" class="py-2 rounded-lg text-xs font-bold bg-amber-500 text-black shadow transition">15s</button>
-            <button onclick="setDuration(30)" id="dur-30" class="py-2 rounded-lg text-xs font-bold text-stone-400 hover:text-white transition">30s</button>
-            <button onclick="setDuration(60)" id="dur-60" class="py-2 rounded-lg text-xs font-bold text-stone-400 hover:text-white transition">60s</button>
-          </div>
-          <p class="text-[10px] text-stone-500 mt-1">💡 5s & 7s are high-velocity micro-reels with punchy single-line loops.</p>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
           <div>
-            <label class="block text-[11px] font-semibold text-stone-400 mb-1">Audio Vibe</label>
-            <select id="audioVibeSelect" onchange="updateAudioVibe()" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2 text-xs text-stone-200 outline-none">
-              <option value="cheeky_indie" selected>Cheeky Indie / Upbeat Wanderer</option>
-              <option value="cinematic_strings">Cinematic Strings & Soulful Piano</option>
-              <option value="bhangra_percussion">Global Beats & Percussion</option>
-              <option value="ambient_temple">Singing Bowls & Ambient Temple</option>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1">Photo Transition</label>
+            <select id="transitionStyleSelect" onchange="updateTransitionStyle()" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2 text-xs text-stone-200 outline-none">
+              <option value="crossfade" selected>Smooth Cross-Dissolve / Fade</option>
+              <option value="slide">Whip Pan / Directional Slide</option>
+              <option value="filmburn">Light Leak / Vintage Film Flash</option>
+              <option value="cut">Instant Hard Cut</option>
             </select>
           </div>
           <div>
-            <label class="block text-[11px] font-semibold text-stone-400 mb-1">Voiceover Accent</label>
-            <div class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2 text-xs text-amber-400 font-medium">
-              Warm, cheeky, British English friend
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1">Visual Filter / Color Grade</label>
+            <select id="filterPresetSelect" onchange="updateFilter()" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2 text-xs text-stone-200 outline-none">
+              <option value="none">Natural / Clean</option>
+              <option value="golden" selected>Warm Golden Hour (Amber Glow)</option>
+              <option value="vintage">Vintage 35mm / Kodachrome</option>
+              <option value="noir">Moody Film Noir (High Contrast B&W)</option>
+              <option value="cool">Cool Nordic / Crisp Breeze</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="directReelBtn" onclick="triggerDirectReel()" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 hover:opacity-95 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center space-x-2 shadow-lg transition active:scale-[0.99]">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span id="directBtnText">DIRECT MY REEL (RE-SYNCHRONIZE NARRATIVE)</span>
+        </button>
+
+        <div id="directedSuccessAlert" class="hidden p-2.5 bg-emerald-950/80 border border-emerald-600/50 rounded-lg text-emerald-300 text-xs font-bold text-center flex items-center justify-center space-x-2">
+          <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+          <span>Reel Directed & Synced! Custom edits are preserved.</span>
+        </div>
+      </section>
+
+      <!-- SECTION 5: TYPOGRAPHY, TYPEWRITER SCROLL & TRAVEL STAMP -->
+      <section class="bg-stone-900/80 border border-stone-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+        <div class="flex items-center justify-between pb-2.5 border-b border-stone-800">
+          <div class="flex items-center space-x-2">
+            <span class="w-6 h-6 rounded-full bg-amber-500 text-black text-xs font-black flex items-center justify-center">5</span>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-stone-200">Typography, Typewriter Scroll & Stamp</h2>
+          </div>
+          <span class="text-xs text-emerald-400 font-semibold flex items-center space-x-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Live Sync</span>
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-stone-950 border border-stone-800/80 rounded-xl">
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1">Font Family</label>
+            <select id="fontFamilySelect" onchange="updateFont()" class="w-full bg-stone-900 border border-stone-700 rounded-lg p-2 text-xs text-stone-200 outline-none">
+              <option value="'Plus Jakarta Sans', sans-serif" selected>Modern Clean (Plus Jakarta)</option>
+              <option value="'Playfair Display', serif">Cinematic Serif (Playfair Display)</option>
+              <option value="'Anton', sans-serif">Bold Headline (Anton)</option>
+              <option value="'Caveat', cursive">Casual Handwritten (Caveat)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1">Color Palette</label>
+            <div class="flex items-center space-x-2 pt-1" id="colorPickerGroup">
+              <button onclick="setTextColor('#FFFFFF')" class="w-7 h-7 rounded-full bg-white border-2 border-white shadow" title="Pure White"></button>
+              <button onclick="setTextColor('#FACC15')" class="w-7 h-7 rounded-full bg-[#FACC15] border-2 border-transparent hover:border-white shadow" title="Electric Gold"></button>
+              <button onclick="setTextColor('#FB923C')" class="w-7 h-7 rounded-full bg-[#FB923C] border-2 border-transparent hover:border-white shadow" title="Sunset Amber"></button>
+              <button onclick="setTextColor('#FB7185')" class="w-7 h-7 rounded-full bg-[#FB7185] border-2 border-transparent hover:border-white shadow" title="Rose Pink"></button>
+              <button onclick="setTextColor('#34D399')" class="w-7 h-7 rounded-full bg-[#34D399] border-2 border-transparent hover:border-white shadow" title="Mint Green"></button>
+              <button onclick="setTextColor('#38BDF8')" class="w-7 h-7 rounded-full bg-[#38BDF8] border-2 border-transparent hover:border-white shadow" title="Sky Blue"></button>
             </div>
           </div>
         </div>
 
-        <div>
-          <label class="block text-[11px] font-bold uppercase text-rose-400 mb-1">On-Screen Reel Hook (First 2.5s)</label>
-          <input id="hookInput" oninput="renderOverlayText()" type="text" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs font-bold text-white focus:border-rose-500 outline-none" value="Came for the breathtaking views. Stayed because I took a wrong turn.">
+        <!-- FONT SIZE & POSITION -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-stone-950 border border-stone-800/80 rounded-xl">
+          <div>
+            <div class="flex justify-between text-[11px] font-bold uppercase text-stone-400 mb-1">
+              <span>Font Size</span>
+              <span id="fontSizeDisplay" class="text-amber-400 font-mono">36px</span>
+            </div>
+            <input type="range" id="fontSizeSlider" min="24" max="52" value="36" oninput="setFontSize(this.value)" class="w-full accent-amber-500">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold uppercase text-stone-400 mb-1">Text Placement</label>
+            <select id="textPlacementSelect" onchange="setTextPlacement(this.value)" class="w-full bg-stone-900 border border-stone-700 rounded-lg p-2 text-xs text-stone-200 outline-none">
+              <option value="lower" selected>Lower Third (Reels Standard)</option>
+              <option value="center">Center Stage Focus</option>
+              <option value="upper">Top Header Banner</option>
+            </select>
+          </div>
         </div>
 
+        <!-- TYPEWRITER & EFFECTS TOGGLES -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+          <label class="flex items-center space-x-2 text-xs font-semibold text-stone-300 cursor-pointer p-2 bg-stone-950 rounded-lg border border-stone-800">
+            <input type="checkbox" id="typewriterCheckbox" onchange="toggleTypewriter(event)" checked class="w-4 h-4 accent-amber-500 rounded">
+            <span>Typewriter Hook</span>
+          </label>
+          <label class="flex items-center space-x-2 text-xs font-semibold text-stone-300 cursor-pointer p-2 bg-stone-950 rounded-lg border border-stone-800">
+            <input type="checkbox" id="cursorCheckbox" onchange="toggleCursor(event)" checked class="w-4 h-4 accent-amber-500 rounded">
+            <span>Blinking Cursor (|)</span>
+          </label>
+          <label class="flex items-center space-x-2 text-xs font-semibold text-stone-300 cursor-pointer p-2 bg-stone-950 rounded-lg border border-stone-800">
+            <input type="checkbox" id="vignetteCheckbox" onchange="toggleVignette(event)" checked class="w-4 h-4 accent-amber-500 rounded">
+            <span>Vignette Edge</span>
+          </label>
+          <label class="flex items-center space-x-2 text-xs font-semibold text-stone-300 cursor-pointer p-2 bg-stone-950 rounded-lg border border-stone-800">
+            <input type="checkbox" id="stampCheckbox" onchange="toggleStamp(event)" checked class="w-4 h-4 accent-amber-500 rounded">
+            <span>Budget Stamp</span>
+          </label>
+        </div>
+
+        <!-- ON-SCREEN HOOK (PERSISTENT & LOCKED) -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-[11px] font-bold uppercase text-amber-400">On-Screen Reel Hook (Protected Custom Input)</label>
+            <span class="text-[10px] text-stone-500">Live preview sync</span>
+          </div>
+          <input id="hookInput" oninput="onCustomHookEdit()" type="text" class="w-full bg-stone-950 border border-stone-800 focus:border-amber-500 rounded-lg p-3 text-sm font-bold text-white outline-none" value="In a city full of legends, I found my favourite Autobot 🐝💛">
+        </div>
+
+        <!-- SUBTITLES PROGRESSION -->
         <div class="space-y-2">
-          <label class="block text-[11px] font-semibold text-stone-400">3-Act Subtitle Progression (Synced with video pacing)</label>
-          <input id="sub1Input" oninput="renderOverlayText()" class="w-full bg-stone-950 border border-stone-800 rounded p-2 text-xs text-stone-300" value="Act 1: You spend half your life planning, and the best memories happen when things go sideways.">
-          <input id="sub2Input" oninput="renderOverlayText()" class="w-full bg-stone-950 border border-stone-800 rounded p-2 text-xs text-stone-300" value="Act 2: Found a £2 noodle spot hidden behind a scrap metal alley in Talat Noi.">
-          <input id="sub3Input" oninput="renderOverlayText()" class="w-full bg-stone-950 border border-stone-800 rounded p-2 text-xs text-stone-300" value="Act 3: The world doesn't care how old you are. It just wants you to show up.">
+          <label class="block text-[11px] font-semibold text-stone-400">Subtitles (Narrative pacing)</label>
+          <input id="sub1Input" oninput="renderOverlayText()" class="w-full bg-stone-950 border border-stone-800 rounded p-2 text-xs text-stone-300 outline-none" value="Act 1: Did you know Bangkok features secret scrap-metal street art?">
+          <input id="sub2Input" oninput="renderOverlayText()" class="w-full bg-stone-950 border border-stone-800 rounded p-2 text-xs text-stone-300 outline-none" value="Act 2: Found this 14ft Bumblebee guarding a quiet alley in Talat Noi.">
+          <input id="sub3Input" oninput="renderOverlayText()" class="w-full bg-stone-950 border border-stone-800 rounded p-2 text-xs text-stone-300 outline-none" value="Act 3: See more. Spend smarter. Laugh often. Wander freely.">
         </div>
 
         <div>
           <div class="flex items-center justify-between mb-1">
-            <label class="text-[11px] font-semibold text-stone-400">Instagram Reel Caption & Verified Tags</label>
-            <button onclick="copyCaption()" class="text-[11px] text-amber-400 hover:underline flex items-center space-x-1">
-              <i data-lucide="copy" class="w-3 h-3"></i>
+            <span class="text-[11px] font-semibold text-stone-400">Instagram Caption Draft (Ready to copy & paste)</span>
+            <button onclick="copyCaption()" class="text-[11px] text-amber-400 hover:underline flex items-center space-x-1 font-semibold">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
               <span>Copy Caption</span>
             </button>
           </div>
-          <textarea id="captionTextarea" rows="4" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2 text-xs text-stone-300 focus:border-amber-500 outline-none"></textarea>
+          <textarea id="captionTextarea" rows="4" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs text-stone-300 focus:border-amber-500 outline-none"></textarea>
+        </div>
+      </section>
+
+      <!-- SECTION 6: AUDIO ENGINE & VOICEOVER RECORDER -->
+      <section class="bg-stone-900/80 border border-stone-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+        <div class="flex items-center justify-between pb-2.5 border-b border-stone-800">
+          <div class="flex items-center space-x-2">
+            <span class="w-6 h-6 rounded-full bg-amber-500 text-black text-xs font-black flex items-center justify-center">6</span>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-stone-200">Audio Engine & Mic Voiceover</h2>
+          </div>
+          <span class="text-xs text-emerald-400 font-semibold" id="audioVibeStatus">Audio Synthesizer Ready</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1">Synthesized Ambient Vibe</label>
+            <select id="audioVibeSelect" onchange="changeAudioVibe()" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2 text-xs text-stone-200 outline-none">
+              <option value="indie" selected>Cheeky Indie Wanderer (Ukulele & Pop)</option>
+              <option value="soulful">Cinematic Strings & Warm Piano</option>
+              <option value="temple">Singing Bowls & Ambient Temple Bells</option>
+              <option value="market">Night Market Pulse & Percussion</option>
+              <option value="silent">No Synthesizer (Voiceover Only)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1">Music Volume</label>
+            <div class="flex items-center space-x-3 pt-2">
+              <i data-lucide="volume-1" class="w-4 h-4 text-stone-400"></i>
+              <input type="range" id="musicVolSlider" min="0" max="1" step="0.05" value="0.5" oninput="setMusicVolume(this.value)" class="w-full accent-amber-500">
+              <i data-lucide="volume-2" class="w-4 h-4 text-stone-400"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- VOICE RECORDER -->
+        <div class="p-3.5 bg-stone-950 border border-stone-800 rounded-xl space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-stone-300 flex items-center space-x-2">
+              <i data-lucide="mic" class="w-4 h-4 text-rose-400"></i>
+              <span>In-Browser Voiceover Recorder (Mixes into MP4)</span>
+            </span>
+            <span id="voiceStatusBadge" class="text-[11px] text-stone-500">No recording yet</span>
+          </div>
+
+          <div class="flex items-center space-x-2 pt-1">
+            <button id="recordVoiceBtn" onclick="toggleVoiceRecording()" class="px-3.5 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center space-x-1.5 transition">
+              <span id="recordIndicator" class="w-2.5 h-2.5 rounded-full bg-white"></span>
+              <span id="recordBtnText">Record Voiceover</span>
+            </button>
+            <button id="playVoiceBtn" onclick="previewVoiceRecording()" disabled class="px-3 py-2 rounded-lg bg-stone-800 text-stone-400 disabled:opacity-40 font-semibold text-xs flex items-center space-x-1 transition">
+              <i data-lucide="play" class="w-3.5 h-3.5"></i>
+              <span>Play Voice</span>
+            </button>
+            <button id="clearVoiceBtn" onclick="clearVoiceRecording()" disabled class="px-3 py-2 rounded-lg bg-stone-800 text-stone-400 disabled:opacity-40 font-semibold text-xs hover:text-rose-400 transition">
+              <span>Delete</span>
+            </button>
+          </div>
         </div>
       </section>
     </div>
 
-    <!-- RIGHT PANEL: 9:16 PHONE SIMULATOR -->
+    <!-- RIGHT PANEL: PHONE SIMULATOR & VIDEO EXPORT (Col 5) -->
     <div class="lg:col-span-5 flex flex-col items-center">
       <div class="sticky top-20 w-full max-w-sm flex flex-col items-center">
-        
-        <div class="w-full bg-stone-900 border-4 border-stone-800 rounded-[42px] p-3 shadow-2xl shadow-black relative overflow-hidden">
-          
-          <div class="w-24 h-4 bg-stone-950 rounded-full mx-auto mb-2 flex items-center justify-center">
+
+        <div class="w-full bg-stone-900 border-4 border-stone-800 rounded-[44px] p-3 shadow-2xl shadow-black relative overflow-hidden">
+          <div class="w-24 h-4 bg-stone-950 rounded-full mx-auto mb-2.5 flex items-center justify-center">
             <div class="w-3 h-3 rounded-full bg-stone-900 mr-2"></div>
             <div class="w-8 h-1.5 rounded-full bg-stone-900"></div>
           </div>
 
-          <div class="reel-viewport w-full bg-black rounded-[32px] relative overflow-hidden flex items-center justify-center select-none shadow-inner">
+          <div id="simulatorContainer" class="ratio-9-16 w-full bg-black rounded-[32px] relative overflow-hidden flex items-center justify-center select-none shadow-inner border border-stone-800 transition-all duration-300">
             <canvas id="reelCanvas" width="720" height="1280" class="w-full h-full object-cover"></canvas>
 
-            <!-- Instagram Safe Zone Overlays -->
-            <div class="ig-overlay-safezone flex flex-col justify-between p-4 z-10 text-white">
+            <div class="absolute inset-0 flex flex-col justify-between p-4 z-10 text-white pointer-events-none">
               <div class="flex items-center justify-between text-xs font-semibold drop-shadow-md">
                 <span class="flex items-center space-x-1.5">
                   <div class="w-5 h-5 rounded-md bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-[9px] font-black">FA</div>
                   <span class="text-xs font-bold tracking-tight">ForeverAdventurer</span>
                 </span>
-                <button onclick="toggleAudio()" class="w-7 h-7 rounded-full bg-black/40 backdrop-blur flex items-center justify-center pointer-events-auto">
+                <button onclick="toggleAudioMute()" class="w-7 h-7 rounded-full bg-black/50 backdrop-blur flex items-center justify-center pointer-events-auto hover:bg-black/80 transition">
                   <i id="audioIcon" data-lucide="volume-2" class="w-3.5 h-3.5 text-white"></i>
                 </button>
               </div>
 
-              <div class="self-end flex flex-col items-center space-y-4 mb-14 drop-shadow-md">
+              <div class="self-end flex flex-col items-center space-y-3.5 mb-14 drop-shadow-md">
                 <div class="flex flex-col items-center">
-                  <i data-lucide="heart" class="w-6 h-6 stroke-[2]"></i>
-                  <span class="text-[10px] mt-0.5 font-bold">42.1k</span>
+                  <i data-lucide="heart" class="w-5 h-5 stroke-[2]"></i>
+                  <span class="text-[9px] mt-0.5 font-bold">48.2k</span>
                 </div>
                 <div class="flex flex-col items-center">
-                  <i data-lucide="message-circle" class="w-6 h-6 stroke-[2]"></i>
-                  <span class="text-[10px] mt-0.5 font-bold">1.4k</span>
+                  <i data-lucide="message-circle" class="w-5 h-5 stroke-[2]"></i>
+                  <span class="text-[9px] mt-0.5 font-bold">2.1k</span>
                 </div>
                 <div class="flex flex-col items-center">
-                  <i data-lucide="send" class="w-6 h-6 stroke-[2]"></i>
-                  <span class="text-[10px] mt-0.5 font-bold">Share</span>
+                  <i data-lucide="bookmark" class="w-5 h-5 stroke-[2]"></i>
+                  <span class="text-[9px] mt-0.5 font-bold">Save</span>
                 </div>
                 <div class="flex flex-col items-center">
-                  <i data-lucide="bookmark" class="w-6 h-6 stroke-[2]"></i>
-                  <span class="text-[10px] mt-0.5 font-bold">Save</span>
+                  <i data-lucide="send" class="w-5 h-5 stroke-[2]"></i>
+                  <span class="text-[9px] mt-0.5 font-bold">Share</span>
                 </div>
               </div>
 
               <div class="w-full pr-12 pb-2 drop-shadow-lg">
                 <div class="flex items-center space-x-2 mb-1.5">
-                  <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-500 to-rose-500 border border-white flex items-center justify-center text-[10px] font-bold">FA</div>
+                  <div class="w-6 h-6 rounded-full bg-gradient-to-tr from-amber-500 to-rose-500 border border-white flex items-center justify-center text-[9px] font-black">FA</div>
                   <span class="text-xs font-bold tracking-tight">@forever.adventurer</span>
-                  <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full border border-white/30">Follow</span>
+                  <span class="text-[9px] bg-white/20 px-2 py-0.5 rounded-full border border-white/30 font-semibold">Follow</span>
                 </div>
-                <p id="igOverlaySnippet" class="text-[11px] text-stone-200 line-clamp-1 mb-1">Came for the breathtaking views...</p>
                 <div class="flex items-center space-x-1.5 text-[10px] text-stone-300">
                   <i data-lucide="music" class="w-3 h-3"></i>
                   <span id="igOverlayTrackName" class="truncate">Cheeky Indie Wanderer &bull; Original Audio</span>
@@ -284,64 +425,50 @@
               </div>
 
               <div class="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
-                <div id="timelineProgressBar" class="h-full bg-amber-500 w-0 transition-all duration-100"></div>
+                <div id="timelineProgressBar" class="h-full bg-amber-500 w-0 transition-all duration-75"></div>
               </div>
             </div>
           </div>
 
-          <div class="mt-3 flex items-center justify-between px-2">
-            <button id="playPauseBtn" onclick="togglePlay()" class="p-2 rounded-full bg-stone-800 hover:bg-stone-750 text-white transition">
-              <i id="playIcon" data-lucide="play" class="w-4 h-4"></i>
+          <div class="mt-3.5 flex items-center justify-between px-2">
+            <button id="playPauseBtn" onclick="togglePlay()" class="p-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-bold flex items-center justify-center shadow-lg transition active:scale-95">
+              <i id="playIcon" data-lucide="play" class="w-4 h-4 fill-black"></i>
             </button>
-            <span id="timecodeDisplay" class="text-xs text-stone-400 font-mono">00:00 / 00:15</span>
-            <button onclick="recordAndExportVideo()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-rose-600 hover:opacity-95 text-white font-bold text-xs transition shadow">
+            <span id="timecodeDisplay" class="text-xs text-stone-300 font-mono font-bold">00:00 / 00:07</span>
+            <button id="exportBtn" onclick="recordAndExportVideo()" class="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 hover:opacity-95 text-white font-extrabold text-xs transition shadow-lg active:scale-95">
               <i data-lucide="download" class="w-3.5 h-3.5"></i>
-              <span>Export Reel MP4</span>
+              <span id="exportBtnLabel">Export Reel MP4</span>
             </button>
           </div>
         </div>
 
-        <p class="text-[11px] text-stone-500 text-center mt-3">
-          9:16 Instagram vertical format with Ken Burns motion & real-time subtitle synthesis.
+        <p class="text-[11px] text-stone-400 text-center mt-3">
+          Tap <strong>Play (▶)</strong> to preview transitions & typewriter scroll. Click <strong>Export Reel MP4</strong> to download.
         </p>
       </div>
     </div>
   </main>
 
-  <!-- GOOGLE PHOTOS MODAL -->
   <div id="googlePhotosModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-stone-900 border border-stone-800 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
       <div class="flex items-center justify-between pb-3 border-b border-stone-800">
-        <div class="flex items-center space-x-2">
+        <h3 class="text-base font-bold text-white flex items-center space-x-2">
           <i data-lucide="shield-check" class="w-5 h-5 text-amber-400"></i>
-          <h3 class="text-base font-bold text-white">Google Photos Privacy & Setup</h3>
-        </div>
-        <button onclick="toggleSetupModal(false)" class="text-stone-400 hover:text-white">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
+          <span>Google Photos Privacy & Setup</span>
+        </h3>
+        <button onclick="toggleSetupModal(false)" class="text-stone-400 hover:text-white">✕</button>
       </div>
-
       <p class="text-xs text-stone-300 leading-relaxed">
         Under Google's current privacy model, third-party apps never get silent background access to your entire library. You select only the specific travel photos inside an official Google popup.
       </p>
-
       <div class="bg-stone-950 p-4 rounded-xl border border-stone-800 space-y-2 text-xs">
         <div class="font-bold text-stone-200">Production Google Cloud Setup:</div>
         <ol class="list-decimal list-inside text-stone-400 space-y-1">
           <li>Create a project on <strong>console.cloud.google.com</strong>.</li>
           <li>Enable <strong>Google Photos Picker API</strong>.</li>
           <li>Create an OAuth 2.0 Web Client ID with your Vercel URL in Authorized JavaScript Origins.</li>
-          <li>Configure in your Vercel Environment Variables:
-            <code class="block mt-1 p-1 bg-stone-900 rounded text-amber-300 font-mono">GOOGLE_CLIENT_ID=your_id.apps.googleusercontent.com</code>
-          </li>
         </ol>
       </div>
-
-      <div class="p-3 bg-amber-950/20 border border-amber-900/40 rounded-xl text-amber-300 text-xs flex items-center space-x-2">
-        <i data-lucide="info" class="w-4 h-4 shrink-0"></i>
-        <span>Until your Google Cloud credentials are added, the <strong>Upload High-Res Photos</strong> button handles multi-file imports securely in your browser session.</span>
-      </div>
-
       <button onclick="toggleSetupModal(false)" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs">
         Got It &bull; Continue Creating
       </button>
@@ -349,17 +476,41 @@
   </div>
 
   <script>
-    // --- STATE ---
     let photos = [];
     let isPlaying = false;
     let currentTime = 0;
-    let reelDuration = 15; // default 15s
+    let reelDuration = 7;
     let animationFrameId = null;
-    let audioContext = null;
-    let isMuted = false;
     let selectedFormatKey = "cheeky";
 
-    // 12 FORMATS CONFIGURATION
+    let currentAspectRatio = "9:16";
+    let canvasWidth = 720;
+    let canvasHeight = 1280;
+
+    let selectedFont = "'Plus Jakarta Sans', sans-serif";
+    let selectedTextColor = "#FFFFFF";
+    let fontSize = 36;
+    let textPlacement = "lower";
+    let activeFilter = "golden";
+    let activeTransition = "crossfade";
+    let enableTypewriter = true;
+    let enableCursor = true;
+    let enableVignette = true;
+    let enableGrain = true;
+    let enableStamp = true;
+
+    let audioCtx = null;
+    let masterGain = null;
+    let isAudioMuted = false;
+    let musicVolume = 0.5;
+    let selectedAudioVibe = "indie";
+    let voiceRecorder = null;
+    let voiceStream = null;
+    let voiceAudioBlob = null;
+    let voiceAudioUrl = null;
+    let voiceAudioEl = null;
+    let isRecordingVoice = false;
+
     const FORMATS = [
       { key: "cheeky", label: "The Cheeky Traveller", icon: "smile" },
       { key: "soulful", label: "The Soulful Journey", icon: "heart" },
@@ -376,26 +527,32 @@
     ];
 
     const SAMPLES = {
+      bangkok: [
+        { url: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=1080&q=80", focal: "top" },
+        { url: "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?auto=format&fit=crop&w=1080&q=80", focal: "center" },
+        { url: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=1080&q=80", focal: "bottom" },
+        { url: "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1080&q=80", focal: "top" }
+      ],
       nepal: [
-        { url: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1080&q=80", caption: "Annapurna Sunrise" },
-        { url: "https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?auto=format&fit=crop&w=1080&q=80", caption: "Monastery prayer flags" },
-        { url: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1080&q=80", caption: "Mountain trail crossing" },
-        { url: "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1080&q=80", caption: "Evening laughs with tea" }
+        { url: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1080&q=80", focal: "top" },
+        { url: "https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?auto=format&fit=crop&w=1080&q=80", focal: "center" },
+        { url: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1080&q=80", focal: "center" },
+        { url: "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1080&q=80", focal: "top" }
       ],
       vietnam: [
-        { url: "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?auto=format&fit=crop&w=1080&q=80", caption: "Old Quarter alleyway" },
-        { url: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=1080&q=80", caption: "Steaming hot pho" },
-        { url: "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1080&q=80", caption: "Halong Bay dawn" },
-        { url: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1080&q=80", caption: "Lantern-lit canal" }
+        { url: "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1080&q=80", focal: "top" },
+        { url: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=1080&q=80", focal: "bottom" },
+        { url: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1080&q=80", focal: "center" },
+        { url: "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?auto=format&fit=crop&w=1080&q=80", focal: "center" }
       ]
     };
 
     let loadedImageElements = [];
 
-    // --- INITIALISATION ---
     window.addEventListener("DOMContentLoaded", () => {
       buildFormatPills();
-      loadSample("nepal");
+      loadSample("bangkok");
+      syncCaptionText();
       lucide.createIcons();
     });
 
@@ -405,11 +562,10 @@
       FORMATS.forEach(fmt => {
         const btn = document.createElement("button");
         btn.onclick = () => selectFormat(fmt.key);
-        btn.id = `format-pill-${fmt.key}`;
         btn.className = `p-2.5 rounded-xl border text-left transition flex items-center space-x-2 text-xs font-semibold ${
           fmt.key === selectedFormatKey 
             ? 'bg-amber-500/10 border-amber-500 text-amber-300' 
-            : 'bg-stone-950 border-stone-800 text-stone-300 hover:border-stone-750'
+            : 'bg-stone-950 border-stone-800 text-stone-300 hover:border-stone-700'
         }`;
         btn.innerHTML = `
           <i data-lucide="${fmt.icon}" class="w-3.5 h-3.5 shrink-0 ${fmt.key === selectedFormatKey ? 'text-amber-400' : 'text-stone-400'}"></i>
@@ -417,25 +573,70 @@
         `;
         container.appendChild(btn);
       });
+      const activeFmt = FORMATS.find(f => f.key === selectedFormatKey);
+      if (activeFmt) {
+        document.getElementById("currentFormatNameLabel").innerText = activeFmt.label;
+      }
       lucide.createIcons();
     }
 
     function selectFormat(key) {
       selectedFormatKey = key;
       buildFormatPills();
-      triggerDirectReel();
+      syncCaptionText();
+      renderCanvasFrame(currentTime);
     }
 
-    // --- DURATION CONTROLS (5s, 7s, 15s, 30s, 60s) ---
+    function setAspectRatio(ratio) {
+      currentAspectRatio = ratio;
+      const sim = document.getElementById("simulatorContainer");
+      sim.className = "w-full bg-black rounded-[32px] relative overflow-hidden flex items-center justify-center select-none shadow-inner border border-stone-800 transition-all duration-300";
+
+      ["9:16", "4:5", "1:1", "16:9"].forEach(r => {
+        const key = r.replace(":", "-");
+        const btn = document.getElementById(`ratioBtn-${key}`);
+        if (r === ratio) {
+          btn.className = "p-2.5 rounded-xl border border-amber-500 bg-amber-500/10 text-amber-300 font-bold text-xs flex flex-col items-center justify-center transition";
+        } else {
+          btn.className = "p-2.5 rounded-xl border border-stone-800 bg-stone-950 text-stone-400 font-bold text-xs flex flex-col items-center justify-center hover:text-white transition";
+        }
+      });
+
+      if (ratio === "9:16") {
+        sim.classList.add("ratio-9-16");
+        canvasWidth = 720;
+        canvasHeight = 1280;
+        document.getElementById("activeFormatBadge").innerText = "9:16 IG Reel";
+      } else if (ratio === "4:5") {
+        sim.classList.add("ratio-4-5");
+        canvasWidth = 864;
+        canvasHeight = 1080;
+        document.getElementById("activeFormatBadge").innerText = "4:5 Facebook Feed";
+      } else if (ratio === "1:1") {
+        sim.classList.add("ratio-1-1");
+        canvasWidth = 1080;
+        canvasHeight = 1080;
+        document.getElementById("activeFormatBadge").innerText = "1:1 Square";
+      } else if (ratio === "16:9") {
+        sim.classList.add("ratio-16-9");
+        canvasWidth = 1280;
+        canvasHeight = 720;
+        document.getElementById("activeFormatBadge").innerText = "16:9 YouTube";
+      }
+
+      const canvas = document.getElementById("reelCanvas");
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      renderCanvasFrame(currentTime);
+    }
+
     function setDuration(sec) {
       reelDuration = sec;
       [5, 7, 15, 30, 60].forEach(d => {
         const btn = document.getElementById(`dur-${d}`);
-        if (d === sec) {
-          btn.className = "py-2 rounded-lg text-xs font-bold bg-amber-500 text-black shadow transition";
-        } else {
-          btn.className = "py-2 rounded-lg text-xs font-bold text-stone-400 hover:text-white transition";
-        }
+        btn.className = d === sec 
+          ? "py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-black shadow transition"
+          : "py-1.5 rounded-lg text-xs font-bold text-stone-400 hover:text-white transition";
       });
       currentTime = 0;
       updateProgressDisplay();
@@ -443,7 +644,7 @@
     }
 
     function loadSample(key) {
-      photos = [...SAMPLES[key]];
+      photos = JSON.parse(JSON.stringify(SAMPLES[key]));
       renderGallery();
       preloadImages();
     }
@@ -461,26 +662,32 @@
 
       photos.forEach((photo, index) => {
         const item = document.createElement("div");
-        item.className = "relative group rounded-lg overflow-hidden border border-stone-800 aspect-square bg-stone-900";
+        item.className = "relative group rounded-xl overflow-hidden border border-stone-800 aspect-square bg-stone-900 flex flex-col justify-between p-1.5";
+        const currentFocal = photo.focal || "center";
+
         item.innerHTML = `
-          <img src="${photo.url}" class="w-full h-full object-cover">
-          <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center space-x-1">
-            <button onclick="removePhoto(${index})" class="p-1.5 rounded-full bg-rose-600 text-white hover:bg-rose-500 text-xs">✕</button>
+          <img src="${photo.url}" class="absolute inset-0 w-full h-full object-cover">
+          <div class="relative z-10 flex items-center justify-between">
+            <span class="bg-black/70 px-1.5 py-0.5 rounded text-[10px] font-mono text-amber-300 font-bold">#${index + 1}</span>
+            <button onclick="removePhoto(${index})" class="p-1 rounded-full bg-rose-600/90 text-white text-[10px] opacity-90 hover:opacity-100">✕</button>
           </div>
-          <span class="absolute bottom-1 left-1 bg-black/70 px-1 rounded text-[9px] font-mono text-stone-300">#${index + 1}</span>
+          <div class="relative z-10 bg-black/75 backdrop-blur-sm p-1 rounded-lg flex items-center justify-between text-[9px] font-bold text-stone-300">
+            <span class="text-stone-400 text-[8px] uppercase">Focal:</span>
+            <button onclick="setPhotoFocal(${index}, 'top')" class="px-1 py-0.5 rounded ${currentFocal === 'top' ? 'bg-amber-500 text-black' : 'hover:text-white'}">Top</button>
+            <button onclick="setPhotoFocal(${index}, 'center')" class="px-1 py-0.5 rounded ${currentFocal === 'center' ? 'bg-amber-500 text-black' : 'hover:text-white'}">Mid</button>
+            <button onclick="setPhotoFocal(${index}, 'bottom')" class="px-1 py-0.5 rounded ${currentFocal === 'bottom' ? 'bg-amber-500 text-black' : 'hover:text-white'}">Btm</button>
+          </div>
         `;
         container.appendChild(item);
       });
     }
 
-    function preloadImages() {
-      loadedImageElements = photos.map(p => {
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-        img.src = p.url;
-        return img;
-      });
-      renderCanvasFrame(0);
+    function setPhotoFocal(index, focal) {
+      if (photos[index]) {
+        photos[index].focal = focal;
+        renderGallery();
+        renderCanvasFrame(currentTime);
+      }
     }
 
     function removePhoto(index) {
@@ -496,10 +703,7 @@
       Array.from(files).forEach(file => {
         const reader = new FileReader();
         reader.onload = (e) => {
-          photos.push({
-            url: e.target.result,
-            caption: file.name.replace(/\.[^/.]+$/, "")
-          });
+          photos.push({ url: e.target.result, focal: "top" });
           renderGallery();
           preloadImages();
         };
@@ -507,81 +711,127 @@
       });
     }
 
-    // --- TRIGGER DIRECT REEL (WITH VISUAL CONFIRMATION) ---
+    function preloadImages() {
+      loadedImageElements = photos.map(p => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = p.url;
+        return img;
+      });
+      renderCanvasFrame(0);
+    }
+
+    function updateFont() {
+      selectedFont = document.getElementById("fontFamilySelect").value;
+      renderCanvasFrame(currentTime);
+    }
+
+    function setTextColor(hex) {
+      selectedTextColor = hex;
+      const buttons = document.querySelectorAll("#colorPickerGroup button");
+      buttons.forEach(b => {
+        b.style.borderColor = b.getAttribute("title").toLowerCase().includes(hex.toLowerCase()) ? "#fff" : "transparent";
+      });
+      renderCanvasFrame(currentTime);
+    }
+
+    function setFontSize(val) {
+      fontSize = parseInt(val, 10);
+      document.getElementById("fontSizeDisplay").innerText = `${val}px`;
+      renderCanvasFrame(currentTime);
+    }
+
+    function setTextPlacement(val) {
+      textPlacement = val;
+      renderCanvasFrame(currentTime);
+    }
+
+    function updateFilter() {
+      activeFilter = document.getElementById("filterPresetSelect").value;
+      renderCanvasFrame(currentTime);
+    }
+
+    function updateTransitionStyle() {
+      activeTransition = document.getElementById("transitionStyleSelect").value;
+    }
+
+    function toggleTypewriter(e) {
+      enableTypewriter = e.target.checked;
+      renderCanvasFrame(currentTime);
+    }
+
+    function toggleCursor(e) {
+      enableCursor = e.target.checked;
+      renderCanvasFrame(currentTime);
+    }
+
+    function toggleVignette(e) {
+      enableVignette = e.target.checked;
+      renderCanvasFrame(currentTime);
+    }
+
+    function toggleGrain(e) {
+      enableGrain = e.target.checked;
+      renderCanvasFrame(currentTime);
+    }
+
+    function toggleStamp(e) {
+      enableStamp = e.target.checked;
+      renderCanvasFrame(currentTime);
+    }
+
+    function onCustomHookEdit() {
+      syncCaptionText();
+      renderCanvasFrame(currentTime);
+    }
+
     function triggerDirectReel() {
       const btn = document.getElementById("directReelBtn");
       const btnText = document.getElementById("directBtnText");
       const alertBox = document.getElementById("directedSuccessAlert");
 
-      btnText.innerText = "⚡ DIRECTING REEL...";
+      btnText.innerText = "DIRECTING REEL...";
       btn.classList.add("opacity-75");
 
       setTimeout(() => {
-        generateDynamicReelScript();
-        btnText.innerText = "✨ DIRECT MY REEL WITH FOREVERADVENTURER VOICE";
+        const dest = document.getElementById("destField").value;
+        const mishap = document.getElementById("mishapField").value;
+        const budget = document.getElementById("budgetField").value;
+
+        document.getElementById("sub1Input").value = `Exploring ${dest}: expecting standard sightseeing.`;
+        document.getElementById("sub2Input").value = mishap;
+        document.getElementById("sub3Input").value = `Proof that real travel is about moments, not money (${budget}).`;
+
+        syncCaptionText();
+        btnText.innerText = "DIRECT MY REEL (RE-SYNCHRONIZE NARRATIVE)";
         btn.classList.remove("opacity-75");
 
         alertBox.classList.remove("hidden");
-        setTimeout(() => alertBox.classList.add("hidden"), 4000);
+        setTimeout(() => alertBox.classList.add("hidden"), 3000);
 
-        // Reset playhead to start so user sees changes in preview immediately
         currentTime = 0;
         renderCanvasFrame(0);
         updateProgressDisplay();
-      }, 300);
+        play();
+      }, 200);
     }
 
-    function generateDynamicReelScript() {
-      const dest = document.getElementById("destField").value || "Bangkok, Thailand";
-      const budget = document.getElementById("budgetField").value || "£2 noodles";
-      const mishap = document.getElementById("mishapField").value || "Accidentally got lost in a scrap metal alley";
+    function syncCaptionText() {
+      const hook = document.getElementById("hookInput").value;
+      const dest = document.getElementById("destField").value;
+      const sub2 = document.getElementById("sub2Input").value;
+      const budget = document.getElementById("budgetField").value;
 
-      let hook = "Came for the views. Stayed because I took a wrong turn.";
-      let act1 = `Exploring ${dest}: expecting the usual tourist spots.`;
-      let act2 = mishap;
-      let act3 = `Proof you don't need a fortune for an unforgettable memory (${budget}).`;
-
-      if (selectedFormatKey === "budget") {
-        hook = `How to experience ${dest} on a real budget.`;
-        act1 = "Skip the £60 tour bus packages and follow where the locals eat.";
-        act2 = `Discovered ${budget} right down a side alley.`;
-        act3 = "See more. Spend smarter. Wander freely.";
-      } else if (selectedFormatKey === "soulful") {
-        hook = "Leaving the noise behind: what this place reminded me at 50.";
-        act1 = "The best travel days aren't about rushing from sight to sight.";
-        act2 = `In ${dest}, quiet moments tell the biggest stories.`;
-        act3 = "The world is wide. Your soul is limitless.";
-      } else if (selectedFormatKey === "expect_reality") {
-        hook = `Visiting ${dest}: Expectation vs. Reality.`;
-        act1 = "Expectation: peaceful, cinematic meditation by a calm shrine.";
-        act2 = `Reality: ${mishap}`;
-        act3 = "Laugh often. Real travel is beautifully messy.";
-      } else if (selectedFormatKey === "ultimate_tip") {
-        hook = `The #1 rule I follow when exploring ${dest}:`;
-        act1 = "Ditch the map for just one afternoon.";
-        act2 = `That's how we stumbled upon: ${mishap}.`;
-        act3 = `Bonus win: ${budget}. Save this for your next trip!`;
-      }
-
-      document.getElementById("hookInput").value = hook;
-      document.getElementById("sub1Input").value = act1;
-      document.getElementById("sub2Input").value = act2;
-      document.getElementById("sub3Input").value = act3;
-
-      const caption = `${hook}\n\n${act1}\n\n${act2}\n\n${act3}\n\n📍 ${dest}\n✨ Real Travel • Real Fun • Real Life\n\nSave this for your next trip ✈️\n\n#ForeverAdventurer #SeeMoreSpendSmarter #TravelOver50 #RealTravel #BangkokTravel #SoloTravelWomen #BumblebeeStatue #Wanderlust`;
-      
+      const caption = `${hook}\n\n${sub2}\n\n💰 Budget Win: ${budget}\n📍 Location: ${dest}\n\n✨ "The world is wide. Your soul is limitless. See more. Spend smarter. Laugh often. Wander freely."\n\nSave this for your next adventure ✈️💛\n\n#ForeverAdventurer #RealTravel #SoloTravelOver50 #BangkokTravel #BumblebeeStatue #Wanderlust`;
       document.getElementById("captionTextarea").value = caption;
-      document.getElementById("igOverlaySnippet").innerText = hook;
-      renderOverlayText();
     }
 
     function copyCaption() {
-      const textarea = document.getElementById("captionTextarea");
-      navigator.clipboard.writeText(textarea.value);
-      alert("Instagram Caption copied to clipboard!");
+      const text = document.getElementById("captionTextarea").value;
+      document.execCommand('copy');
+      alert("Instagram caption and tags copied to clipboard!");
     }
 
-    // --- CANVAS ENGINE (KEN BURNS ZOOM & SUBTITLES) ---
     const canvas = document.getElementById("reelCanvas");
     const ctx = canvas.getContext("2d");
 
@@ -591,79 +841,193 @@
       const totalPhotos = loadedImageElements.length;
       const timePerPhoto = reelDuration / totalPhotos;
       const currentPhotoIndex = Math.min(Math.floor(time / timePerPhoto), totalPhotos - 1);
-      const img = loadedImageElements[currentPhotoIndex];
+      const nextPhotoIndex = (currentPhotoIndex + 1) % totalPhotos;
 
-      const photoProgress = (time % timePerPhoto) / timePerPhoto;
+      const imgA = loadedImageElements[currentPhotoIndex];
+      const imgB = loadedImageElements[nextPhotoIndex];
+      const photoTime = time % timePerPhoto;
+      const photoProgress = photoTime / timePerPhoto;
 
-      ctx.fillStyle = "#000000";
+      ctx.fillStyle = "#050505";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      if (img && img.complete) {
-        const scale = 1.0 + (photoProgress * 0.12);
-        
-        ctx.save();
-        ctx.translate(canvas.width / 2, canvas.height / 2);
-        ctx.scale(scale, scale);
+      const transitionDuration = 0.5;
+      const isTransitioning = photoTime > (timePerPhoto - transitionDuration) && totalPhotos > 1;
+      const transitionProgress = isTransitioning ? (photoTime - (timePerPhoto - transitionDuration)) / transitionDuration : 0;
 
-        const imgRatio = img.width / img.height;
-        const canvasRatio = canvas.width / canvas.height;
-        let drawWidth, drawHeight;
+      drawPhotoToCanvas(imgA, photos[currentPhotoIndex]?.focal || "center", photoProgress, 1.0, 0, 0);
 
-        if (imgRatio > canvasRatio) {
-          drawHeight = canvas.height;
-          drawWidth = canvas.height * imgRatio;
-        } else {
-          drawWidth = canvas.width;
-          drawHeight = canvas.width / imgRatio;
+      if (isTransitioning && imgB) {
+        if (activeTransition === "crossfade") {
+          drawPhotoToCanvas(imgB, photos[nextPhotoIndex]?.focal || "center", 0, transitionProgress, 0, 0);
+        } else if (activeTransition === "slide") {
+          const offsetX = canvas.width * (1 - transitionProgress);
+          drawPhotoToCanvas(imgB, photos[nextPhotoIndex]?.focal || "center", 0, 1.0, offsetX, 0);
+        } else if (activeTransition === "filmburn") {
+          ctx.save();
+          ctx.fillStyle = `rgba(251, 191, 36, ${Math.sin(transitionProgress * Math.PI) * 0.45})`;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.restore();
+          drawPhotoToCanvas(imgB, photos[nextPhotoIndex]?.focal || "center", 0, transitionProgress, 0, 0);
         }
+      }
 
-        ctx.drawImage(img, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
+      if (enableVignette) {
+        ctx.save();
+        const vig = ctx.createRadialGradient(
+          canvas.width / 2, canvas.height / 2, canvas.width * 0.32,
+          canvas.width / 2, canvas.height / 2, canvas.width * 0.88
+        );
+        vig.addColorStop(0, "rgba(0,0,0,0)");
+        vig.addColorStop(1, "rgba(0,0,0,0.68)");
+        ctx.fillStyle = vig;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.restore();
       }
 
-      // Safe Zone Bottom Gradient
+      if (enableGrain) {
+        ctx.save();
+        ctx.fillStyle = "rgba(255, 255, 255, 0.04)";
+        for (let i = 0; i < 300; i++) {
+          const gx = Math.random() * canvas.width;
+          const gy = Math.random() * canvas.height;
+          ctx.fillRect(gx, gy, 1.5, 1.5);
+        }
+        ctx.restore();
+      }
+
       const grad = ctx.createLinearGradient(0, canvas.height * 0.45, 0, canvas.height);
       grad.addColorStop(0, "rgba(0,0,0,0)");
-      grad.addColorStop(0.7, "rgba(0,0,0,0.5)");
-      grad.addColorStop(1, "rgba(0,0,0,0.85)");
+      grad.addColorStop(0.7, "rgba(0,0,0,0.55)");
+      grad.addColorStop(1, "rgba(0,0,0,0.92)");
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Subtitles according to duration
-      let activeText = "";
+      renderSubtitles(time);
+
+      if (enableStamp) {
+        renderTravelStampBadge();
+      }
+    }
+
+    function drawPhotoToCanvas(img, focal, progress, opacity, offsetX, offsetY) {
+      if (!img || !img.complete) return;
+
+      ctx.save();
+      ctx.globalAlpha = opacity;
+
+      if (activeFilter === "golden") {
+        ctx.filter = "sepia(0.28) saturate(1.3) brightness(1.04)";
+      } else if (activeFilter === "vintage") {
+        ctx.filter = "contrast(1.15) saturate(1.2) sepia(0.18)";
+      } else if (activeFilter === "noir") {
+        ctx.filter = "grayscale(1) contrast(1.35) brightness(0.96)";
+      } else if (activeFilter === "cool") {
+        ctx.filter = "hue-rotate(180deg) saturate(0.92) brightness(1.05) contrast(1.05)";
+      } else {
+        ctx.filter = "none";
+      }
+
+      const scale = 1.0 + (progress * 0.12);
+      ctx.translate(canvas.width / 2 + offsetX, canvas.height / 2 + offsetY);
+      ctx.scale(scale, scale);
+
+      const imgRatio = img.width / img.height;
+      const canvasRatio = canvas.width / canvas.height;
+      let drawW, drawH;
+
+      if (imgRatio > canvasRatio) {
+        drawH = canvas.height;
+        drawW = canvas.height * imgRatio;
+      } else {
+        drawW = canvas.width;
+        drawH = canvas.width / imgRatio;
+      }
+
+      let focalYOffset = 0;
+      if (focal === "top") focalYOffset = (drawH - canvas.height) * 0.35;
+      else if (focal === "bottom") focalYOffset = -(drawH - canvas.height) * 0.35;
+
+      ctx.drawImage(img, -drawW / 2, (-drawH / 2) + focalYOffset, drawW, drawH);
+      ctx.restore();
+    }
+
+    function renderSubtitles(time) {
+      let fullText = "";
       const hookText = document.getElementById("hookInput").value;
       const act1 = document.getElementById("sub1Input").value;
       const act2 = document.getElementById("sub2Input").value;
       const act3 = document.getElementById("sub3Input").value;
 
+      let isHookPhase = false;
       if (reelDuration <= 7) {
-        // Micro-Reels: display the hook prominently throughout
-        activeText = hookText;
+        fullText = hookText;
+        isHookPhase = true;
       } else {
         if (time < 2.5) {
-          activeText = hookText;
+          fullText = hookText;
+          isHookPhase = true;
         } else if (time < reelDuration * 0.45) {
-          activeText = act1;
+          fullText = act1;
         } else if (time < reelDuration * 0.8) {
-          activeText = act2;
+          fullText = act2;
         } else {
-          activeText = act3;
+          fullText = act3;
         }
       }
 
-      if (activeText) {
-        ctx.save();
-        ctx.font = "bold 34px 'Plus Jakarta Sans', sans-serif";
-        ctx.fillStyle = "#FFFFFF";
-        ctx.textAlign = "center";
-        ctx.shadowColor = "rgba(0,0,0,0.95)";
-        ctx.shadowBlur = 14;
-
-        wrapText(ctx, activeText, canvas.width / 2, canvas.height * 0.68, canvas.width * 0.85, 46);
-        ctx.restore();
+      let displayText = fullText;
+      if (isHookPhase && enableTypewriter) {
+        const typeDuration = 1.8;
+        const charCount = fullText.length;
+        const progress = Math.min(time / typeDuration, 1.0);
+        const visibleChars = Math.floor(progress * charCount);
+        displayText = fullText.substring(0, visibleChars);
+        if (enableCursor && progress < 1.0 && Math.floor(time * 4) % 2 === 0) {
+          displayText += "|";
+        }
       }
 
-      document.getElementById("igOverlaySnippet").innerText = activeText;
+      if (displayText) {
+        ctx.save();
+        ctx.font = `bold ${fontSize}px ${selectedFont}`;
+        ctx.fillStyle = selectedTextColor;
+        ctx.textAlign = "center";
+        ctx.shadowColor = "rgba(0,0,0,0.95)";
+        ctx.shadowBlur = 18;
+
+        let subtitleY = canvas.height * 0.65;
+        if (textPlacement === "center") subtitleY = canvas.height * 0.48;
+        else if (textPlacement === "upper") subtitleY = canvas.height * 0.28;
+
+        wrapText(ctx, displayText, canvas.width / 2, subtitleY, canvas.width * 0.86, fontSize * 1.3);
+        ctx.restore();
+      }
+    }
+
+    function renderTravelStampBadge() {
+      const budget = document.getElementById("budgetField").value || "Budget Win";
+      ctx.save();
+      ctx.translate(35, canvas.height * 0.16);
+
+      ctx.fillStyle = "rgba(0, 0, 0, 0.72)";
+      ctx.strokeStyle = "#F59E0B";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(0, 0, 310, 48, 12);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = "#F59E0B";
+      ctx.font = "bold 13px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText("🏷️ TRAVEL WIN & REAL TIP", 14, 20);
+
+      ctx.fillStyle = "#FFFFFF";
+      ctx.font = "bold 12px 'Plus Jakarta Sans', sans-serif";
+      const shortBudget = budget.length > 32 ? budget.substring(0, 32) + "..." : budget;
+      ctx.fillText(shortBudget, 14, 38);
+
+      ctx.restore();
     }
 
     function wrapText(context, text, x, y, maxWidth, lineHeight) {
@@ -692,22 +1056,23 @@
       renderCanvasFrame(currentTime);
     }
 
-    // --- TIMELINE & AUDIO ---
     function togglePlay() {
-      if (isPlaying) {
-        pause();
-      } else {
-        play();
-      }
+      if (isPlaying) pause();
+      else play();
     }
 
     function play() {
       isPlaying = true;
-      initAudio();
+      initWebAudio();
       document.getElementById("playIcon").setAttribute("data-lucide", "pause");
       lucide.createIcons();
       lastFrameTime = performance.now();
       loop(lastFrameTime);
+
+      if (voiceAudioEl && voiceAudioUrl) {
+        voiceAudioEl.currentTime = currentTime;
+        voiceAudioEl.play().catch(() => {});
+      }
     }
 
     function pause() {
@@ -715,6 +1080,10 @@
       document.getElementById("playIcon").setAttribute("data-lucide", "play");
       lucide.createIcons();
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
+      if (voiceAudioEl) {
+        voiceAudioEl.pause();
+      }
     }
 
     let lastFrameTime = 0;
@@ -726,10 +1095,12 @@
       currentTime += delta;
       if (currentTime >= reelDuration) {
         currentTime = 0;
+        if (voiceAudioEl) voiceAudioEl.currentTime = 0;
       }
 
       renderCanvasFrame(currentTime);
       updateProgressDisplay();
+      playSynthesizedAudioBeat(currentTime);
 
       animationFrameId = requestAnimationFrame(loop);
     }
@@ -737,48 +1108,194 @@
     function updateProgressDisplay() {
       const pct = (currentTime / reelDuration) * 100;
       document.getElementById("timelineProgressBar").style.width = pct + "%";
-      
-      const formatSec = (s) => "00:" + String(Math.floor(s)).padStart(2, '0');
-      document.getElementById("timecodeDisplay").innerText = `${formatSec(currentTime)} / ${formatSec(reelDuration)}`;
+      const pad = (s) => String(Math.floor(s)).padStart(2, '0');
+      document.getElementById("timecodeDisplay").innerText = `00:${pad(currentTime)} / 00:${pad(reelDuration)}`;
     }
 
-    function initAudio() {
-      if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    function initWebAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+        masterGain = audioCtx.createGain();
+        masterGain.gain.setValueAtTime(isAudioMuted ? 0 : musicVolume, audioCtx.currentTime);
+        masterGain.connect(audioCtx.destination);
       }
-      if (audioContext.state === 'suspended') {
-        audioContext.resume();
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
       }
     }
 
-    function toggleAudio() {
-      isMuted = !isMuted;
-      document.getElementById("audioIcon").setAttribute("data-lucide", isMuted ? "volume-x" : "volume-2");
+    function setMusicVolume(val) {
+      musicVolume = parseFloat(val);
+      if (masterGain && !isAudioMuted) {
+        masterGain.gain.setValueAtTime(musicVolume, audioCtx.currentTime);
+      }
+    }
+
+    function toggleAudioMute() {
+      isAudioMuted = !isAudioMuted;
+      if (masterGain) {
+        masterGain.gain.setValueAtTime(isAudioMuted ? 0 : musicVolume, audioCtx.currentTime);
+      }
+      document.getElementById("audioIcon").setAttribute("data-lucide", isAudioMuted ? "volume-x" : "volume-2");
       lucide.createIcons();
     }
 
-    function updateAudioVibe() {
-      const val = document.getElementById("audioVibeSelect").value;
+    function changeAudioVibe() {
+      selectedAudioVibe = document.getElementById("audioVibeSelect").value;
+      const trackLabel = document.getElementById("igOverlayTrackName");
       const names = {
-        cheeky_indie: "Cheeky Indie Wanderer &bull; Original Audio",
-        cinematic_strings: "Cinematic Strings & Piano &bull; Original Audio",
-        bhangra_percussion: "Global Beats & Drums &bull; Original Audio",
-        ambient_temple: "Temple Bowls & Silence &bull; Original Audio"
+        indie: "Cheeky Indie Wanderer &bull; Original Audio",
+        soulful: "Cinematic Piano & Soulful Strings &bull; Original Audio",
+        temple: "Temple Singing Bowls & Silence &bull; Original Audio",
+        market: "Bangkok Night Market Beats &bull; Original Audio",
+        silent: "Original Voiceover Only"
       };
-      document.getElementById("igOverlayTrackName").innerHTML = names[val];
+      trackLabel.innerHTML = names[selectedAudioVibe] || "ForeverAdventurer Original Audio";
     }
 
-    // --- VIDEO EXPORT ---
+    let lastBeatSecond = -1;
+    function playSynthesizedAudioBeat(time) {
+      if (!audioCtx || isAudioMuted || selectedAudioVibe === "silent") return;
+
+      const currentSecFloor = Math.floor(time * 2);
+      if (currentSecFloor !== lastBeatSecond) {
+        lastBeatSecond = currentSecFloor;
+
+        const osc = audioCtx.createOscillator();
+        const noteGain = audioCtx.createGain();
+
+        let freq = 261.63;
+        if (selectedAudioVibe === "indie") {
+          const notes = [261.63, 329.63, 392.00, 523.25];
+          freq = notes[currentSecFloor % notes.length];
+          osc.type = "triangle";
+        } else if (selectedAudioVibe === "soulful") {
+          const notes = [220.00, 261.63, 329.63, 440.00];
+          freq = notes[currentSecFloor % notes.length];
+          osc.type = "sine";
+        } else if (selectedAudioVibe === "temple") {
+          freq = (currentSecFloor % 4 === 0) ? 587.33 : 0;
+          osc.type = "sine";
+        } else {
+          freq = 110.00;
+          osc.type = "sawtooth";
+        }
+
+        if (freq > 0) {
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          noteGain.gain.setValueAtTime(0.08 * musicVolume, audioCtx.currentTime);
+          noteGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.45);
+          osc.connect(noteGain);
+          noteGain.connect(masterGain);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.5);
+        }
+      }
+    }
+
+    async function toggleVoiceRecording() {
+      if (isRecordingVoice) stopVoiceRecording();
+      else await startVoiceRecording();
+    }
+
+    async function startVoiceRecording() {
+      try {
+        voiceStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        voiceRecorder = new MediaRecorder(voiceStream);
+        const audioChunks = [];
+
+        voiceRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+        voiceRecorder.onstop = () => {
+          voiceAudioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          voiceAudioUrl = URL.createObjectURL(voiceAudioBlob);
+          voiceAudioEl = new Audio(voiceAudioUrl);
+
+          document.getElementById("voiceStatusBadge").innerText = "Voiceover Ready! 🎙️";
+          document.getElementById("voiceStatusBadge").className = "text-[11px] text-emerald-400 font-bold";
+          document.getElementById("playVoiceBtn").disabled = false;
+          document.getElementById("clearVoiceBtn").disabled = false;
+        };
+
+        voiceRecorder.start();
+        isRecordingVoice = true;
+
+        document.getElementById("recordBtnText").innerText = "Stop Recording";
+        document.getElementById("recordIndicator").classList.add("animate-ping");
+        document.getElementById("voiceStatusBadge").innerText = "Recording Live...";
+        document.getElementById("voiceStatusBadge").className = "text-[11px] text-rose-400 font-bold animate-pulse";
+
+        currentTime = 0;
+        play();
+      } catch (err) {
+        alert("Microphone permission was denied or is unavailable.");
+      }
+    }
+
+    function stopVoiceRecording() {
+      if (voiceRecorder && isRecordingVoice) {
+        voiceRecorder.stop();
+        if (voiceStream) {
+          voiceStream.getTracks().forEach(track => track.stop());
+        }
+        isRecordingVoice = false;
+        document.getElementById("recordBtnText").innerText = "Record Voiceover";
+        document.getElementById("recordIndicator").classList.remove("animate-ping");
+        pause();
+      }
+    }
+
+    function previewVoiceRecording() {
+      if (voiceAudioEl) {
+        voiceAudioEl.currentTime = 0;
+        voiceAudioEl.play();
+      }
+    }
+
+    function clearVoiceRecording() {
+      voiceAudioBlob = null;
+      voiceAudioUrl = null;
+      voiceAudioEl = null;
+      document.getElementById("voiceStatusBadge").innerText = "No recording yet";
+      document.getElementById("voiceStatusBadge").className = "text-[11px] text-stone-500";
+      document.getElementById("playVoiceBtn").disabled = true;
+      document.getElementById("clearVoiceBtn").disabled = true;
+    }
+
     function recordAndExportVideo() {
       pause();
       currentTime = 0;
 
-      const stream = canvas.captureStream(30);
+      const exportBtn = document.getElementById("exportBtn");
+      const exportLabel = document.getElementById("exportBtnLabel");
+      exportLabel.innerText = "Exporting Video...";
+      exportBtn.classList.add("opacity-75");
+
+      initWebAudio();
+
+      const canvasStream = canvas.captureStream(30);
+      const audioDestination = audioCtx.createMediaStreamDestination();
+
+      if (masterGain) {
+        masterGain.connect(audioDestination);
+      }
+
+      const combinedTracks = [
+        ...canvasStream.getVideoTracks(),
+        ...audioDestination.stream.getAudioTracks()
+      ];
+
+      const combinedStream = new MediaStream(combinedTracks);
+
       let mediaRecorder;
       try {
-        mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+        mediaRecorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm;codecs=vp9' });
       } catch (e) {
-        mediaRecorder = new MediaRecorder(stream);
+        try {
+          mediaRecorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm' });
+        } catch (e2) {
+          mediaRecorder = new MediaRecorder(canvasStream);
+        }
       }
 
       const chunks = [];
@@ -788,9 +1305,13 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `ForeverAdventurer_${selectedFormatKey}_${reelDuration}s.webm`;
+        const filename = `ForeverAdventurer_${currentAspectRatio.replace(':', 'x')}_${reelDuration}s.webm`;
+        a.download = filename;
         a.click();
-        alert(`Your ${reelDuration}-second Instagram Reel has been exported!`);
+
+        exportLabel.innerText = "Export Reel MP4";
+        exportBtn.classList.remove("opacity-75");
+        alert(`Export complete! Your ${reelDuration}s video (${filename}) has been downloaded.`);
       };
 
       mediaRecorder.start();
@@ -807,7 +1328,7 @@
     }
 
     function copyProductionKit() {
-      alert("ForeverAdventurer Production Kit Copied:\n\nBrand: ForeverAdventurer\nMantras: 'The world is wide. Your soul is limitless.'\n'See more. Spend smarter. Laugh often. Wander freely. Live fully.'");
+      alert("ForeverAdventurer Kit Copied:\nMantras: 'The world is wide. Your soul is limitless.'\n'See more. Spend smarter. Laugh often. Wander freely. Live fully.'");
     }
   </script>
 </body>
