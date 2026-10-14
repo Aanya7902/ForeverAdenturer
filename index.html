@@ -32,6 +32,7 @@
         <p class="text-xs text-stone-400">“The world is wide. Your soul is limitless.” • See more. Spend smarter. Laugh often. Wander freely. Live fully.</p>
       </div>
     </div>
+    <button onclick="newPost()" class="text-xs font-semibold px-3.5 py-2 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700 transition" title="Clear the text, caption, instructions and pop-up for a fresh post (photos and style are kept)">New post</button>
   </header>
 
   <!-- MAIN STUDIO LAYOUT -->
@@ -209,7 +210,6 @@
             <label for="captionTextarea" class="text-[11px] font-semibold text-stone-400">Instagram Caption Draft</label>
             <div class="flex items-center space-x-3">
               <span id="captionModeBadge" class="text-[10px] text-emerald-400">Auto-updating</span>
-              <button onclick="regenerateCaption()" class="text-[11px] text-amber-400 hover:underline">Regenerate</button>
               <button onclick="copyCaption()" class="text-[11px] text-amber-400 hover:underline flex items-center space-x-1">
                 <i data-lucide="copy" class="w-3 h-3"></i>
                 <span>Copy Caption</span>
@@ -217,7 +217,141 @@
             </div>
           </div>
           <textarea id="captionTextarea" oninput="onCaptionManualEdit()" rows="9" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs text-stone-200 focus:border-amber-500 outline-none leading-relaxed"></textarea>
-          <p class="text-[11px] text-stone-500 mt-1">Edit the caption freely: once you type in it, auto-updating pauses so your edits aren't overwritten. Press Regenerate to rebuild it from your fields.</p>
+          <p class="text-[11px] text-stone-500 mt-1">This is your working draft. Anything you type here is kept, and Rewrite starts from exactly what's in this box.</p>
+        </div>
+
+        <div class="p-3 bg-stone-950 border border-stone-800/80 rounded-xl space-y-3">
+          <div>
+            <label for="rewriteInstructions" class="block text-xs font-bold text-amber-400 mb-1">What would you like to change?</label>
+            <textarea id="rewriteInstructions" oninput="onInstructionsInput()" rows="3" maxlength="2000" placeholder="e.g. Make it funnier and shorter, strengthen the opening hook, keep all locations and prices, and include the free art trail." class="w-full bg-stone-900 border border-stone-700 rounded-lg p-2.5 text-xs text-stone-200 focus:border-amber-500 outline-none leading-relaxed"></textarea>
+            <p class="text-[11px] text-stone-500 mt-1">These are <strong>instructions for the next rewrite</strong>, not text that will appear in the caption. They stay here until you change them.</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label for="rewriteTone" class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1">Tone</label>
+              <select id="rewriteTone" onchange="onInstructionsInput()" class="w-full bg-stone-900 border border-stone-700 rounded-lg p-2 text-xs text-stone-200 outline-none">
+                <option value="keep" selected>Keep my tone</option>
+                <option value="funnier">Funnier</option>
+                <option value="authentic">More authentic, less promotional</option>
+                <option value="soulful">Warm and soulful</option>
+                <option value="informative">Informative</option>
+              </select>
+            </div>
+            <div>
+              <label for="rewriteLength" class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1">Length</label>
+              <select id="rewriteLength" onchange="onInstructionsInput()" class="w-full bg-stone-900 border border-stone-700 rounded-lg p-2 text-xs text-stone-200 outline-none">
+                <option value="keep" selected>Keep length</option>
+                <option value="shorter">Shorter</option>
+                <option value="longer">Longer</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="rewriteBtn" onclick="rewriteCaption()" class="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 hover:opacity-95 text-white font-black text-xs uppercase tracking-wider shadow-lg transition disabled:opacity-60 disabled:cursor-wait">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span id="rewriteBtnText">Rewrite caption</span>
+            </button>
+            <button id="undoBtn" onclick="undoCaption()" disabled class="px-3 py-2.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-200 font-bold text-xs border border-stone-700 transition disabled:opacity-40">↶ Undo last change</button>
+            <button onclick="rebuildFromFields()" class="px-3 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 font-semibold text-xs border border-stone-800 transition" title="Throws away the draft and rebuilds a template caption from the fields above. Undo is available.">Rebuild from my fields</button>
+          </div>
+
+          <p id="rewriteStatus" role="status" aria-live="polite" class="text-[11px] min-h-[1rem] text-stone-400"></p>
+          <div id="rewriteNotes" class="hidden p-2.5 rounded-lg bg-amber-950/30 border border-amber-800/50 text-[11px] text-amber-200 space-y-1"></div>
+          <div id="pendingRewrite" class="hidden p-2.5 rounded-lg bg-sky-950/40 border border-sky-800/50 text-xs text-sky-200 space-y-2">
+            <p>You changed the caption while the rewrite was running, so your draft has <strong>not</strong> been replaced.</p>
+            <div class="flex gap-2">
+              <button onclick="usePendingRewrite()" class="px-3 py-1.5 rounded-lg bg-sky-500 text-black font-bold text-[11px]">Use the new version</button>
+              <button onclick="dismissPendingRewrite()" class="px-3 py-1.5 rounded-lg bg-stone-800 border border-stone-700 text-stone-200 font-bold text-[11px]">Keep my draft</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 5: REEL HIGHLIGHT POP-UP -->
+      <section id="badgeSection" class="bg-stone-900/80 border border-stone-800 rounded-2xl p-5 shadow-xl space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-stone-800">
+          <div class="flex items-center space-x-2">
+            <span class="w-6 h-6 rounded-full bg-amber-500 text-black text-xs font-black flex items-center justify-center">5</span>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-stone-200">Reel Highlight Pop-Up</h2>
+          </div>
+          <span class="text-xs text-stone-400">Optional · chosen per post</span>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+          <label class="flex items-center space-x-2 text-xs font-semibold text-stone-300 cursor-pointer">
+            <input type="checkbox" id="badgeEnabled" onchange="toggleBadge(event)" class="w-4 h-4 accent-amber-500 rounded">
+            <span>Show this pop-up on the reel</span>
+          </label>
+          <label class="flex items-center space-x-2 text-xs font-semibold text-stone-300 cursor-pointer">
+            <input type="checkbox" id="badgeInCaption" onchange="toggleBadgeInCaption(event)" class="w-4 h-4 accent-amber-500 rounded">
+            <span>Also add it to the caption</span>
+          </label>
+        </div>
+
+        <div id="labelSuggestionsWrap" class="hidden">
+          <p class="text-[11px] text-stone-400 mb-1.5">Suggested from your text <span class="text-stone-600">(keyword matching, not verified facts)</span>:</p>
+          <div id="labelSuggestions" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <div class="relative">
+          <label id="labelPickerLabel" class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1">Highlight label</label>
+          <button id="labelPickerBtn" type="button" onclick="toggleLabelPicker()" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="labelPickerLabel labelPickerBtn" class="w-full flex items-center justify-between bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs text-stone-200 hover:border-stone-700">
+            <span id="labelPickerValue">Choose a label…</span>
+            <span aria-hidden="true">▾</span>
+          </button>
+          <div id="labelPickerPanel" class="hidden absolute z-30 left-0 right-0 mt-1 bg-stone-900 border border-stone-700 rounded-xl shadow-2xl p-2">
+            <input id="labelSearch" type="search" oninput="renderLabelList()" placeholder="Search labels (e.g. free, food, tip)…" aria-label="Search labels" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2 text-xs text-stone-200 outline-none focus:border-amber-500 mb-2">
+            <div id="labelList" role="listbox" aria-label="Highlight labels" class="max-h-64 overflow-y-auto pr-1"></div>
+          </div>
+        </div>
+
+        <div id="customForm" class="hidden p-3 bg-stone-950 border border-stone-800 rounded-xl space-y-3">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-stone-400">Custom label</p>
+          <div class="grid grid-cols-[5rem_1fr] gap-3">
+            <div>
+              <label for="customEmoji" class="block text-[11px] text-stone-400 mb-1">Emoji</label>
+              <input id="customEmoji" oninput="onCustomInput()" maxlength="8" type="text" class="w-full bg-stone-900 border border-stone-700 rounded-lg p-2 text-center text-lg outline-none focus:border-amber-500" placeholder="🎉">
+            </div>
+            <div>
+              <label for="customText" class="block text-[11px] text-stone-400 mb-1">Label <span id="customTextCount" class="text-stone-600">0/30</span></label>
+              <input id="customText" oninput="onCustomInput()" maxlength="30" type="text" class="w-full bg-stone-900 border border-stone-700 rounded-lg p-2 text-xs text-stone-200 outline-none focus:border-amber-500" placeholder="e.g. £2 Duck Noodles!">
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1.5" id="emojiQuick" aria-label="Quick emoji"></div>
+          <div class="flex items-center gap-3">
+            <button onclick="saveCustomLabel()" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-bold text-[11px]"><span id="saveCustomText">Save to my labels</span></button>
+            <button onclick="closeCustomForm()" class="text-[11px] text-stone-400 hover:underline">Close</button>
+          </div>
+        </div>
+
+        <div id="myLabelsWrap" class="hidden">
+          <p class="text-[11px] text-stone-400 mb-1.5">My saved labels:</p>
+          <div id="myLabels" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label for="badgeSupport" class="text-[11px] font-bold uppercase tracking-wider text-stone-400">Supporting text <span class="normal-case font-normal text-stone-500">(optional)</span></label>
+            <span class="flex items-center gap-3">
+              <button onclick="fillSupportFromBudget()" class="text-[11px] text-amber-400 hover:underline">Use my Budget Win field</button>
+              <span id="badgeSupportCount" class="text-[10px] text-stone-500">0/90</span>
+            </span>
+          </div>
+          <input id="badgeSupport" oninput="onBadgeDraftInput()" maxlength="90" type="text" placeholder="e.g. Free art trail + £2 duck noodles." class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs text-stone-200 focus:border-amber-500 outline-none">
+          <p class="text-[11px] text-stone-500 mt-1">Leave it blank to show only the label.</p>
+        </div>
+
+        <p id="claimWarning" role="status" class="hidden text-[11px] text-amber-300 bg-amber-950/30 border border-amber-800/50 rounded-lg p-2"></p>
+
+        <div>
+          <p class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1.5">Preview</p>
+          <div id="badgePreview" class="max-w-sm"></div>
+          <div class="flex items-center gap-3 mt-3">
+            <button id="applyBadgeBtn" onclick="applyBadge()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs disabled:opacity-50">Use this badge</button>
+            <span id="badgeApplyStatus" class="text-[11px] text-stone-400" role="status" aria-live="polite"></span>
+          </div>
         </div>
       </section>
     </div>
@@ -318,6 +452,14 @@
     let activeTransition = "fade";
     let enableTypewriter = true;
     let enableVignette = true;
+    // ---- Reel highlight pop-up: per-post state -------------------------------------------
+    // `badge` is what the reel shows. `badgeDraft` is what you're editing; "Use this badge" copies draft -> badge.
+    const DEMO_SUPPORT = "Free scrap metal art trail + two-pound duck noodles";
+    let badge = { enabled: true, emoji: "💰", text: "Budget Win", support: DEMO_SUPPORT, inCaption: false };
+    let badgeDraft = { emoji: "💰", text: "Budget Win", support: DEMO_SUPPORT };
+    let customLabels = [];        // saved custom labels: reusable across posts (not per-post)
+    let customFormOpen = false;
+    let editingCustomId = null;
 
     let captionEdited = false;  // true once the user types in the caption box
 
@@ -478,6 +620,7 @@
       const body = paras.join("\n\n");
 
       const out = [hook];
+      if (o.badgeLine) out.push(o.badgeLine);   // only when "Also add it to the caption" is ticked
       if (paras.length) out.push(body);
 
       // Data-integrity guarantee: anything the user typed is shown in full somewhere, never silently dropped.
@@ -542,7 +685,9 @@
             dest: $("destField").value, budget: $("budgetField").value, mishap: $("mishapField").value,
             hook: $("hookInput").value, caption: $("captionTextarea").value, captionEdited,
             format: selectedFormatKey, duration: reelDuration, filter: activeFilter, font: selectedFont,
-            color: selectedTextColor, typewriter: enableTypewriter, vignette: enableVignette, transition: activeTransition
+            color: selectedTextColor, typewriter: enableTypewriter, vignette: enableVignette, transition: activeTransition,
+            rewrite: { instructions: $("rewriteInstructions").value, tone: $("rewriteTone").value, length: $("rewriteLength").value },
+            badge: { ...badge }, badgeDraft: { ...badgeDraft }
           }));
         } catch (e) { /* storage may be unavailable (private mode); app still works */ }
       }, 300);
@@ -561,6 +706,16 @@
       if (typeof s.typewriter === "boolean") { enableTypewriter = s.typewriter; $("typewriterCheckbox").checked = s.typewriter; }
       if (typeof s.vignette === "boolean") { enableVignette = s.vignette; $("vignetteCheckbox").checked = s.vignette; }
       if (["fade", "slide", "cut"].includes(s.transition)) { activeTransition = s.transition; $("transitionSelect").value = s.transition; }
+      if (s.rewrite && typeof s.rewrite === "object") {
+        setVal("rewriteInstructions", s.rewrite.instructions);
+        if (["keep", "funnier", "authentic", "soulful", "informative"].includes(s.rewrite.tone)) $("rewriteTone").value = s.rewrite.tone;
+        if (["keep", "shorter", "longer"].includes(s.rewrite.length)) $("rewriteLength").value = s.rewrite.length;
+      }
+      if (s.badge && typeof s.badge === "object") {
+        const clean = (o) => ({ emoji: firstGrapheme((o && o.emoji) || ""), text: String((o && o.text) || "").slice(0, MAX_LABEL), support: String((o && o.support) || "").slice(0, MAX_SUPPORT) });
+        badge = { enabled: !!s.badge.enabled, inCaption: !!s.badge.inCaption, ...clean(s.badge) };
+        badgeDraft = clean(s.badgeDraft || s.badge);
+      }
       if (s.captionEdited && typeof s.caption === "string") { captionEdited = true; $("captionTextarea").value = s.caption; }
     }
 
@@ -587,39 +742,87 @@
       refreshIcons();
     }
 
+    // ---- Caption draft state -------------------------------------------------
+    // The caption box is the WORKING DRAFT. Nothing replaces it silently:
+    //  - typing in it pauses template auto-updates (captionEdited)
+    //  - every programmatic replacement goes through setDraft() + pushHistory() so Undo always works
+    let draftVersion = 0;      // bumps on ANY change to the caption box (typing or programmatic)
+    let lastGenerated = "";    // last caption the app/AI produced, so the AI can see what you changed by hand
+    let captionHistory = [];   // previous drafts for Undo
+
+    function setDraft(text) { $("captionTextarea").value = text; draftVersion++; }
+    function pushHistory() {
+      const cur = $("captionTextarea").value;
+      if (!cur.trim() || captionHistory[captionHistory.length - 1] === cur) return;
+      captionHistory.push(cur);
+      if (captionHistory.length > 20) captionHistory.shift();
+      updateUndoBtn();
+    }
+    function updateUndoBtn() { const b = $("undoBtn"); if (b) b.disabled = !captionHistory.length; }
+    function undoCaption() {
+      if (!captionHistory.length) return;
+      cancelRewrite();
+      const prev = captionHistory.pop();
+      setDraft(prev);
+      captionEdited = true;
+      updateCaptionBadge(); updateUndoBtn();
+      setRewriteStatus("Restored your previous draft.", "ok");
+      saveState();
+    }
+
     function selectFormat(key) {
       if (key === selectedFormatKey) return;
-      if (captionEdited && !confirm("Switching angle will replace the caption you edited by hand. Continue?")) return;
+      if (captionEdited && !confirm("Switching angle will replace your current caption draft with a new template version. (You can Undo.) Continue?")) return;
+      cancelRewrite();
       selectedFormatKey = key;
-      captionEdited = false;
       buildFormatPills();
-      regenerateCaption();
+      rebuildFromTemplate();
     }
 
     function currentCaptionInputs() {
       return { formatKey: selectedFormatKey, dest: $("destField").value, budget: $("budgetField").value,
-               note: $("mishapField").value, hook: $("hookInput").value };
+               note: $("mishapField").value, hook: $("hookInput").value,
+               badgeLine: (badge.enabled && badge.inCaption) ? badgeCaptionLine() : "" };
     }
     function updateCaptionBadge() {
       const b = $("captionModeBadge");
-      b.textContent = captionEdited ? "Edited by hand (paused)" : "Auto-updating";
+      b.textContent = captionEdited ? "Your draft (auto-update paused)" : "Auto-updating";
       b.className = "text-[10px] " + (captionEdited ? "text-amber-400" : "text-emerald-400");
     }
-    function regenerateCaption() {
+    // internal: rebuild the template caption (no confirmation)
+    function rebuildFromTemplate() {
+      pushHistory();
+      const t = buildCaption(currentCaptionInputs());
+      setDraft(t);
+      lastGenerated = t;
       captionEdited = false;
-      $("captionTextarea").value = buildCaption(currentCaptionInputs());
       updateCaptionBadge();
       renderCanvasFrame(currentTime);
+      renderBadgeEditor();
       saveState();
     }
+    // user-facing: explicit "throw the draft away and start from the fields again"
+    function rebuildFromFields() {
+      if (captionEdited && !confirm("This replaces your current draft with a fresh template caption built from the fields above. (You can Undo.) Continue?")) return;
+      cancelRewrite();
+      rebuildFromTemplate();
+      setRewriteStatus("Caption rebuilt from your fields. Undo is available.", "ok");
+    }
     function onFieldInput() {
-      if (!captionEdited) $("captionTextarea").value = buildCaption(currentCaptionInputs());
+      if (!captionEdited) {
+        const t = buildCaption(currentCaptionInputs());
+        setDraft(t);
+        lastGenerated = t;
+      }
       renderCanvasFrame(currentTime);
+      renderBadgeEditor();
       saveState();
     }
     function onCaptionManualEdit() {
+      draftVersion++;
       captionEdited = true;
       updateCaptionBadge();
+      renderBadgeSuggestions();
       saveState();
     }
     function applySuggestedHook() {
@@ -629,6 +832,173 @@
       $("hookInput").value = tpl.hook;
       onFieldInput();
       toast("Hook suggested. Edit it however you like.");
+    }
+
+    // =====================================================================
+    //  CAPTION REWRITE (AI). Always built from the CURRENT draft and the LATEST instructions.
+    //  Needs the /api/rewrite serverless function (see api/rewrite.js).
+    // =====================================================================
+    let rewriteSeq = 0;        // identifies the newest request; older responses are ignored
+    let rewriteCtl = null;     // AbortController of the request in flight
+    let pendingRewrite = null; // AI result held back because the draft changed while it was running
+
+    function rewriteUrl() { return window.FA_REWRITE_URL || "/api/rewrite"; }
+
+    function setRewriteStatus(msg, kind) {
+      const el = $("rewriteStatus");
+      el.textContent = msg || "";
+      el.className = "text-[11px] min-h-[1rem] " + (kind === "error" ? "text-rose-400" : kind === "ok" ? "text-emerald-400" : "text-stone-400");
+      el.setAttribute("role", kind === "error" ? "alert" : "status");
+    }
+    function setRewriteBusy(busy) {
+      const b = $("rewriteBtn");
+      b.disabled = busy;
+      $("rewriteBtnText").textContent = busy ? "Rewriting…" : "Rewrite caption";
+    }
+    function showNotes(notes) {
+      const box = $("rewriteNotes");
+      box.innerHTML = "";
+      const list = (notes || []).filter(n => typeof n === "string" && n.trim()).slice(0, 8);
+      list.forEach(n => { const p = document.createElement("p"); p.textContent = "• " + n; box.appendChild(p); });
+      box.classList.toggle("hidden", !list.length);
+    }
+    function onInstructionsInput() { saveState(); }
+
+    // Cancel any request in flight so its (late) response can never overwrite newer work.
+    function cancelRewrite() {
+      const wasBusy = !!rewriteCtl;
+      rewriteSeq++;
+      if (rewriteCtl) { try { rewriteCtl.abort(); } catch (e) {} rewriteCtl = null; }
+      setRewriteBusy(false);
+      dismissPendingRewrite();
+      if (wasBusy) setRewriteStatus("Rewrite cancelled. Your draft is unchanged.");
+    }
+
+    // Prices / amounts, used for the "did anything important go missing?" check and badge claim checks.
+    const PRICE_SRC = "[£$€]\\s?\\d[\\d.,]*|\\b\\d[\\d.,]*\\s?(?:pounds?|quid|thb|baht|usd|gbp|eur|dollars?|euros?)\\b|\\b(?:one|two|three|four|five|six|seven|eight|nine|ten)[- ]pounds?\\b";
+    const hasPrice = (t) => new RegExp(PRICE_SRC, "i").test(t || "");
+    function extractProtected(text) {
+      const found = (String(text || "").match(new RegExp(PRICE_SRC, "gi")) || []).map(s => s.trim());
+      return [...new Set(found)];
+    }
+    function missingDetails(prevDraft, nextDraft, dest) {
+      const norm = (s) => String(s).toLowerCase().replace(/\s+/g, " ");
+      const next = norm(nextDraft);
+      const wanted = extractProtected(prevDraft);
+      const place = shortDest(dest);
+      if (place && norm(prevDraft).includes(norm(place))) wanted.push(place);
+      return [...new Set(wanted)].filter(w => !next.includes(norm(w)));
+    }
+
+    function collectRewritePayload(draft, instructions, requestId) {
+      return {
+        requestId,
+        currentCaption: draft,                 // the working draft, including every manual edit
+        lastGeneratedCaption: lastGenerated,   // lets the model see what was changed by hand
+        instructions,                          // the latest "What would you like to change?" text
+        tone: $("rewriteTone").value,
+        length: $("rewriteLength").value,
+        facts: {
+          destination: tidy($("destField").value),
+          budgetWin: tidy($("budgetField").value),
+          observation: tidy($("mishapField").value),
+          hook: tidy($("hookInput").value),
+          angle: (FORMATS.find(f => f.key === selectedFormatKey) || {}).label || ""
+        },
+        badge: {
+          enabled: !!badge.enabled,
+          label: badge.enabled ? labelString(badge) : "",
+          supportingText: badge.enabled ? badge.support : "",
+          includeInCaption: !!(badge.enabled && badge.inCaption)
+        },
+        protectedDetails: extractProtected(draft + " " + $("budgetField").value + " " + badge.support)
+      };
+    }
+
+    async function rewriteCaption() {
+      if (rewriteCtl) return;                                   // duplicate-click guard
+      const draft = $("captionTextarea").value;                 // read at click time: always the latest edits
+      const instructions = $("rewriteInstructions").value;      // read at click time: always the latest instructions
+      if (!draft.trim()) { setRewriteStatus("There's no caption to rewrite yet. Type one, or use “Rebuild from my fields”.", "error"); return; }
+      const hasSettings = $("rewriteTone").value !== "keep" || $("rewriteLength").value !== "keep";
+      if (!instructions.trim() && !hasSettings) {
+        setRewriteStatus("Tell me what to change (or pick a tone/length) first.", "error");
+        $("rewriteInstructions").focus();
+        return;
+      }
+
+      const reqId = ++rewriteSeq;
+      const versionAtSend = draftVersion;
+      const payload = collectRewritePayload(draft, instructions, reqId);
+      const ctl = new AbortController();
+      rewriteCtl = ctl;
+      dismissPendingRewrite();
+      showNotes([]);
+      setRewriteBusy(true);
+      setRewriteStatus("Rewriting from your current draft…");
+      const timeout = setTimeout(() => ctl.abort(), 45000);
+
+      try {
+        const resp = await fetch(rewriteUrl(), {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload), signal: ctl.signal
+        });
+        let data = null;
+        try { data = await resp.json(); } catch (e) { data = null; }
+        if (reqId !== rewriteSeq) return;                       // a newer action superseded this request: ignore silently
+        if (!resp.ok) {
+          throw new Error((data && data.error) || (resp.status === 404
+            ? "The AI rewrite service isn't set up on this site yet (missing /api/rewrite)."
+            : `The rewrite service returned an error (${resp.status}).`));
+        }
+        const out = data && typeof data.caption === "string" ? data.caption.trim() : "";
+        if (!out) throw new Error("The rewrite came back empty. Please try again.");
+
+        const notes = Array.isArray(data.notes) ? data.notes : [];
+        if (draftVersion !== versionAtSend) {
+          // You kept typing while it ran: never overwrite that work. Offer the new version instead.
+          pendingRewrite = { caption: out, notes, basedOn: draft };
+          $("pendingRewrite").classList.remove("hidden");
+          setRewriteStatus("The new version is ready, but you edited the draft meanwhile. Choose which to keep.");
+          return;
+        }
+        applyRewrite(out, notes, draft);
+      } catch (err) {
+        if (reqId !== rewriteSeq) return;
+        const aborted = err && err.name === "AbortError";
+        setRewriteStatus(aborted ? "The rewrite took too long and was stopped. Your draft and instructions are unchanged. Try again." :
+          `${err.message || "The rewrite failed."} Your draft and instructions are unchanged. You can retry.`, "error");
+      } finally {
+        clearTimeout(timeout);
+        if (reqId === rewriteSeq) { rewriteCtl = null; setRewriteBusy(false); }
+      }
+    }
+
+    function applyRewrite(newCaption, notes, previousDraft) {
+      pushHistory();                    // current draft is saved first, so Undo brings it back
+      setDraft(newCaption);
+      lastGenerated = newCaption;
+      captionEdited = true;             // this is now your working draft; template auto-updates stay paused
+      updateCaptionBadge();
+      const gone = missingDetails(previousDraft, newCaption, $("destField").value);
+      const allNotes = [...notes];
+      if (gone.length) allNotes.push(`These details from your previous draft aren't in the new version: ${gone.join(", ")}. Use Undo, or add them back, if you still need them.`);
+      showNotes(allNotes);
+      setRewriteStatus("New caption ready ✓ Edit it, change the instructions, and rewrite again any time.", "ok");
+      renderBadgeSuggestions();
+      saveState();
+    }
+    function usePendingRewrite() {
+      if (!pendingRewrite) return;
+      const p = pendingRewrite;
+      pendingRewrite = null;
+      $("pendingRewrite").classList.add("hidden");
+      applyRewrite(p.caption, p.notes, $("captionTextarea").value);
+    }
+    function dismissPendingRewrite() {
+      if (pendingRewrite) setRewriteStatus("Kept your draft.");
+      pendingRewrite = null;
+      $("pendingRewrite").classList.add("hidden");
     }
 
     // =====================================================================
@@ -883,6 +1253,415 @@
       return { lines, size: Math.max(size, 26), lh: Math.max(size, 26) * 1.22, overflow: lines.length > 7 };
     }
 
+    // =====================================================================
+    //  REEL HIGHLIGHT POP-UP: label library, suggestions, custom labels, editor
+    // =====================================================================
+    const LABEL_LIBRARY = [
+      { id: "budget", title: "Budget & money-saving", labels: [
+        ["💰", "Budget Win"], ["🆓", "Free Thing to Do"], ["💸", "Under £10"], ["🤑", "Bargain Alert"], ["💎", "Best Value"],
+        ["💷", "Money-Saving Tip"], ["🎟️", "Worth Every Penny"], ["💰", "Spend Smarter"], ["🍜", "Cheap Eats"],
+        ["💵", "What It Really Costs"], ["💰", "Hidden Value"], ["🎉", "Free Experience"]] },
+      { id: "hidden", title: "Hidden places & discoveries", labels: [
+        ["💎", "Hidden Gem"], ["🤯", "Unexpected Discovery"], ["📍", "Secret Spot"], ["🗺️", "Off the Beaten Path"], ["👀", "Don't Miss This"],
+        ["📸", "Photo Spot"], ["🎨", "Street Art Trail"], ["🏛️", "Cultural Find"], ["🌆", "Local Favourite"], ["🤖", "Quirky Landmark"],
+        ["🧭", "Worth Exploring"], ["✨", "Unexpected Wonder"]] },
+      { id: "food", title: "Food & drink", labels: [
+        ["🍜", "Cheap Eats"], ["🍴", "Local Food Find"], ["😋", "Must-Try Food"], ["⭐", "Michelin Guide Find"], ["☕", "Café Discovery"],
+        ["🍜", "Best Bite for Your Budget"], ["🍽️", "Worth the Detour"], ["🥟", "Local Food Favourite"], ["💰", "Delicious Deal"], ["🍴", "Foodie Find"]] },
+      { id: "advice", title: "Practical travel advice", labels: [
+        ["💡", "Travel Tip"], ["⚠️", "Know Before You Go"], ["🎒", "Travel Hack"], ["🚇", "Getting Around"], ["🕒", "Best Time to Visit"],
+        ["📍", "Location Tip"], ["💵", "Budget Breakdown"], ["🧭", "First-Time Visitor Tip"], ["📌", "Save This Spot"],
+        ["🛂", "Essential Travel Advice"], ["🚶", "Walking Route"], ["🎟️", "Booking Tip"]] },
+      { id: "activities", title: "Activities & experiences", labels: [
+        ["🎉", "Free Activity"], ["🚶", "Walk This Way"], ["🧡", "Local Experience"], ["🐾", "Quirky Discovery"], ["🌟", "Bucket List Moment"],
+        ["📸", "Instagram-Worthy"], ["🎭", "Something Different"], ["🏞️", "Adventure Find"], ["🎨", "Creative Discovery"], ["❤️", "Worth the Journey"]] },
+      { id: "brand", title: "Personal & brand-led", labels: [
+        ["✈️", "Forever Adventurer Find"], ["😂", "Travel Plot Twist"], ["❤️", "Personal Favourite"], ["🙌", "Adventure Win"],
+        ["🌍", "See More, Spend Smarter"], ["💛", "Unexpected Joy"], ["👣", "Another One for the Memories"],
+        ["🎒", "Adventure Has No Age Limit"], ["🤩", "Would You Try This?"], ["📌", "Add This to Your List"]] }
+    ];
+    const MAX_LABEL = 30, MAX_SUPPORT = 90;
+    const QUICK_EMOJI = ["💰", "🆓", "🍜", "💎", "🎨", "🤯", "💡", "📍", "🚶", "😂", "❤️", "✨", "🎉", "📸", "🤖", "🌟"];
+    const CUSTOM_KEY = "foreverAdventurer.customLabels.v1";
+
+    const labelString = (o) => `${o.emoji ? o.emoji + " " : ""}${o.text || ""}`.trim();
+    const firstGrapheme = (s) => {
+      s = String(s || "").trim();
+      if (!s) return "";
+      try { if (window.Intl && Intl.Segmenter) return [...new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(s)][0].segment; } catch (e) {}
+      return Array.from(s)[0] || "";
+    };
+    function badgeCaptionLine() {
+      const l = labelString(badge);
+      return l ? (badge.support ? `${l}: ${badge.support}` : l) : "";
+    }
+
+    // ---- Factual-claim safety: never imply "free", Michelin, prices… unless YOUR text says so ----
+    // Only text YOU wrote counts as "supplied information": the four fields, the supporting text, and the caption
+    // once you've edited it (minus the badge line itself). The auto-built template never counts as evidence.
+    function suppliedText() {
+      let caption = "";
+      if (captionEdited) {
+        caption = $("captionTextarea").value;
+        const own = badgeCaptionLine();
+        if (own) caption = caption.split(own).join(" ");
+      }
+      return [$("destField").value, $("budgetField").value, $("mishapField").value, $("hookInput").value,
+              badgeDraft.support, caption].join(" \n ");
+    }
+    const CLAIM_RULES = [
+      { labels: ["Free Thing to Do", "Free Activity", "Free Experience"], re: /\bfree\b|\bno charge\b|\bno entry fee\b/i,
+        msg: "Nothing in your text says this is free. Only use this label if it really is." },
+      { labels: ["Michelin Guide Find"], re: /michelin/i,
+        msg: "Nothing in your text mentions the Michelin Guide, and this app can't verify awards. Only use this label if it's true." },
+      { labels: ["Under £10"], test: hasPrice,
+        msg: "No price found in your text. Only use this label if the cost really is under £10." },
+      { labels: ["Cheap Eats", "Best Bite for Your Budget", "Delicious Deal", "Bargain Alert", "Money-Saving Tip", "Spend Smarter"],
+        test: (t) => hasPrice(t) || /cheap|budget|bargain|deal|save|saving/i.test(t),
+        msg: "Nothing in your text mentions a price or saving. Only use this label if it's accurate." },
+      { labels: ["Street Art Trail"], re: /\bart\b|mural|graffiti|sculpture|statue/i,
+        msg: "Nothing in your text mentions street art. Only use this label if it's accurate." }
+    ];
+    function claimWarning(textLabel, context) {
+      const t = String(textLabel || "");
+      const ctxText = context === undefined ? suppliedText() : context;
+      for (const r of CLAIM_RULES) {
+        if (r.labels.some(l => l.toLowerCase() === t.trim().toLowerCase())) {
+          const ok = r.test ? r.test(ctxText) : r.re.test(ctxText);
+          return ok ? "" : r.msg;
+        }
+      }
+      // custom labels: same words, same rule
+      if (/\bfree\b/i.test(t) && !/\bfree\b/i.test(ctxText.replace(t, ""))) return "Your label says “free” but nothing else in your text does. Only keep it if it's true.";
+      if (/michelin/i.test(t) && !/michelin/i.test(ctxText.replace(t, ""))) return "Your label mentions Michelin but nothing else in your text does, and this app can't verify awards. Only keep it if it's true.";
+      return "";
+    }
+
+    // ---- Suggestions: simple keyword matching on what YOU wrote (never invents facts) ----
+    function suggestLabels(text) {
+      const t = String(text || "");
+      const out = [];
+      const add = (emoji, text, reason) => { if (!out.some(o => o.text === text)) out.push({ emoji, text, reason }); };
+      const food = /noodle|soup|restaurant|\beat\b|\beats\b|food|meal|bowl|café|cafe|street food/i.test(t);
+      if (/michelin/i.test(t)) add("⭐", "Michelin Guide Find", "Your text mentions Michelin (the app can't verify it)");
+      if (/\bfree\b/i.test(t)) add("🆓", "Free Thing to Do", "Your text says “free”");
+      if (hasPrice(t) && food) add("🍜", "Cheap Eats", "Your text has a price and a food mention");
+      if (hasPrice(t) || /budget|bargain|cheap/i.test(t)) add("💰", "Budget Win", "Your text mentions a price or budget");
+      if (/art trail|street art|mural|graffiti/i.test(t)) add("🎨", "Street Art Trail", "Your text mentions street art");
+      if (/statue|giant|robot|transformer|bumblebee|quirky|unusual/i.test(t)) add("🤯", "Unexpected Discovery", "Your text mentions something unusual");
+      if (/hidden|secret|tucked|off the beaten|alley/i.test(t)) add("💎", "Hidden Gem", "Your text mentions a hidden spot");
+      if (/\btip\b|before you go|save this|\bhack\b/i.test(t)) add("💡", "Travel Tip", "Your text reads like advice");
+      if (/\bwalk|route|trail/i.test(t)) add("🚶", "Walk This Way", "Your text mentions a walk or trail");
+      return out.slice(0, 4);
+    }
+
+    // ---- Custom labels (persist in localStorage) ----
+    function loadCustomLabels() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(CUSTOM_KEY) || "[]");
+        customLabels = Array.isArray(raw) ? raw.filter(c => c && typeof c.text === "string").slice(0, 50)
+          .map(c => ({ id: String(c.id || Math.random().toString(36).slice(2)), emoji: firstGrapheme(c.emoji), text: c.text.slice(0, MAX_LABEL) })) : [];
+      } catch (e) { customLabels = []; }
+    }
+    function persistCustomLabels() { try { localStorage.setItem(CUSTOM_KEY, JSON.stringify(customLabels)); } catch (e) { toast("Couldn't save your custom label in this browser.", "error"); } }
+    function saveCustomLabel() {
+      const text = tidy($("customText").value).slice(0, MAX_LABEL);
+      const emoji = firstGrapheme($("customEmoji").value);
+      if (!text) { toast("Type a label first.", "error"); $("customText").focus(); return; }
+      if (editingCustomId) {
+        const c = customLabels.find(x => x.id === editingCustomId);
+        if (c) { c.text = text; c.emoji = emoji; }
+      } else if (!customLabels.some(c => c.text === text && c.emoji === emoji)) {
+        customLabels.push({ id: "c" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), emoji, text });
+      }
+      editingCustomId = null;
+      persistCustomLabels();
+      badgeDraft.emoji = emoji; badgeDraft.text = text;
+      toast("Saved to your labels.");
+      renderBadgeEditor();
+    }
+    function editCustomLabel(id) {
+      const c = customLabels.find(x => x.id === id);
+      if (!c) return;
+      editingCustomId = id; customFormOpen = true;
+      $("customEmoji").value = c.emoji; $("customText").value = c.text;
+      badgeDraft.emoji = c.emoji; badgeDraft.text = c.text;
+      renderBadgeEditor();
+      $("customText").focus();
+    }
+    function removeCustomLabel(id) {
+      const c = customLabels.find(x => x.id === id);
+      if (!c || !confirm(`Remove “${labelString(c)}” from your saved labels?`)) return;
+      customLabels = customLabels.filter(x => x.id !== id);
+      if (editingCustomId === id) editingCustomId = null;
+      persistCustomLabels();
+      renderBadgeEditor();
+    }
+    function useCustomLabel(id) {
+      const c = customLabels.find(x => x.id === id);
+      if (!c) return;
+      badgeDraft.emoji = c.emoji; badgeDraft.text = c.text;
+      renderBadgeEditor();
+    }
+    function onCustomInput() {
+      badgeDraft.emoji = firstGrapheme($("customEmoji").value);
+      badgeDraft.text = tidy($("customText").value).slice(0, MAX_LABEL);
+      $("customTextCount").textContent = `${$("customText").value.length}/${MAX_LABEL}`;
+      renderBadgeEditor(true);
+    }
+    function closeCustomForm() { customFormOpen = false; editingCustomId = null; renderBadgeEditor(); }
+
+    // ---- Picker (searchable, grouped by category) ----
+    function toggleLabelPicker(force) {
+      const panel = $("labelPickerPanel");
+      const open = force !== undefined ? force : panel.classList.contains("hidden");
+      panel.classList.toggle("hidden", !open);
+      $("labelPickerBtn").setAttribute("aria-expanded", open ? "true" : "false");
+      if (open) { $("labelSearch").value = ""; renderLabelList(); $("labelSearch").focus(); }
+    }
+    function renderLabelList() {
+      const q = tidy($("labelSearch").value).toLowerCase();
+      const list = $("labelList");
+      list.innerHTML = "";
+      const match = (emoji, text, cat) => !q || text.toLowerCase().includes(q) || (cat || "").toLowerCase().includes(q);
+      let shown = 0;
+      const addGroup = (title, items) => {
+        if (!items.length) return;
+        const h = document.createElement("p");
+        h.className = "sticky top-0 bg-stone-900 text-[10px] font-bold uppercase tracking-wider text-amber-400 py-1 mt-1";
+        h.textContent = title;
+        list.appendChild(h);
+        items.forEach(([emoji, text, id]) => {
+          const b = document.createElement("button");
+          b.type = "button"; b.setAttribute("role", "option");
+          b.className = "w-full text-left px-2 py-1.5 rounded-md text-xs text-stone-200 hover:bg-stone-800 focus:bg-stone-800";
+          b.textContent = `${emoji} ${text}`;
+          b.onclick = () => { if (id) useCustomLabel(id); else { badgeDraft.emoji = emoji; badgeDraft.text = text; renderBadgeEditor(); } toggleLabelPicker(false); };
+          list.appendChild(b);
+          shown++;
+        });
+      };
+      addGroup("★ My labels", customLabels.filter(c => match(c.emoji, c.text, "my labels")).map(c => [c.emoji, c.text, c.id]));
+      LABEL_LIBRARY.forEach(cat => addGroup(cat.title, cat.labels.filter(([e, t]) => match(e, t, cat.title))));
+      if (!shown) {
+        const p = document.createElement("p");
+        p.className = "text-xs text-stone-500 px-2 py-3";
+        p.textContent = "No match. Use “Other / Custom label” below.";
+        list.appendChild(p);
+      }
+      const other = document.createElement("button");
+      other.type = "button";
+      other.className = "w-full text-left px-2 py-2 mt-2 rounded-md text-xs font-bold text-amber-300 border border-amber-700/50 hover:bg-stone-800";
+      other.textContent = "✏️ Other / Custom label…";
+      other.onclick = () => { customFormOpen = true; editingCustomId = null; toggleLabelPicker(false); $("customEmoji").value = badgeDraft.emoji; $("customText").value = badgeDraft.text; renderBadgeEditor(); $("customText").focus(); };
+      list.appendChild(other);
+    }
+
+    // ---- Editor: draft, preview, confirm ----
+    function renderBadgeSuggestions() {
+      const wrap = $("labelSuggestionsWrap"), box = $("labelSuggestions");
+      if (!wrap) return;
+      box.innerHTML = "";
+      const sugg = suggestLabels(suppliedText());
+      sugg.forEach(s => {
+        const b = document.createElement("button");
+        b.type = "button"; b.title = s.reason;
+        b.className = "px-2.5 py-1 rounded-full border border-amber-600/50 bg-amber-500/10 text-amber-200 text-[11px] font-semibold hover:bg-amber-500/20";
+        b.textContent = `${s.emoji} ${s.text}`;
+        b.onclick = () => { badgeDraft.emoji = s.emoji; badgeDraft.text = s.text; renderBadgeEditor(); };
+        box.appendChild(b);
+      });
+      wrap.classList.toggle("hidden", !sugg.length);
+    }
+    function badgesDiffer() {
+      return badgeDraft.emoji !== badge.emoji || badgeDraft.text !== badge.text || badgeDraft.support !== badge.support;
+    }
+    function renderBadgeEditor(keepCustomFields) {
+      $("badgeEnabled").checked = badge.enabled;
+      $("badgeInCaption").checked = badge.inCaption;
+      $("labelPickerValue").textContent = labelString(badgeDraft) || "Choose a label…";
+      const sup = $("badgeSupport");
+      if (sup.value !== badgeDraft.support) sup.value = badgeDraft.support;
+      $("badgeSupportCount").textContent = `${badgeDraft.support.length}/${MAX_SUPPORT}`;
+
+      const form = $("customForm");
+      form.classList.toggle("hidden", !customFormOpen);
+      if (customFormOpen && !keepCustomFields) {
+        if ($("customEmoji") !== document.activeElement) $("customEmoji").value = badgeDraft.emoji;
+        if ($("customText") !== document.activeElement) $("customText").value = badgeDraft.text;
+        $("customTextCount").textContent = `${$("customText").value.length}/${MAX_LABEL}`;
+      }
+      $("saveCustomText").textContent = editingCustomId ? "Update saved label" : "Save to my labels";
+
+      const mine = $("myLabels");
+      mine.innerHTML = "";
+      customLabels.forEach(c => {
+        const chip = document.createElement("span");
+        chip.className = "inline-flex items-center rounded-full border border-stone-700 bg-stone-950 text-[11px] text-stone-200 overflow-hidden";
+        const use = document.createElement("button");
+        use.type = "button"; use.className = "px-2.5 py-1 hover:bg-stone-800"; use.textContent = labelString(c); use.onclick = () => useCustomLabel(c.id);
+        const ed = document.createElement("button");
+        ed.type = "button"; ed.className = "px-1.5 py-1 hover:bg-stone-800 text-stone-400"; ed.textContent = "✎"; ed.setAttribute("aria-label", `Edit ${labelString(c)}`); ed.onclick = () => editCustomLabel(c.id);
+        const del = document.createElement("button");
+        del.type = "button"; del.className = "px-1.5 py-1 hover:bg-rose-900 text-rose-300"; del.textContent = "✕"; del.setAttribute("aria-label", `Remove ${labelString(c)}`); del.onclick = () => removeCustomLabel(c.id);
+        chip.append(use, ed, del);
+        mine.appendChild(chip);
+      });
+      $("myLabelsWrap").classList.toggle("hidden", !customLabels.length);
+
+      // claim safety
+      const warn = $("claimWarning");
+      const w = badgeDraft.text ? claimWarning(badgeDraft.text) : "";
+      warn.textContent = w ? "⚠ " + w : "";
+      warn.classList.toggle("hidden", !w);
+
+      // live preview card (same look as the on-reel pop-up)
+      const prev = $("badgePreview");
+      prev.innerHTML = "";
+      if (!badgeDraft.text && !badgeDraft.emoji) {
+        const p = document.createElement("p");
+        p.className = "text-xs text-stone-500"; p.textContent = "Choose a label to see the preview.";
+        prev.appendChild(p);
+      } else {
+        const card = document.createElement("div");
+        card.className = "rounded-2xl bg-[#FFF7E6] text-stone-900 p-4 shadow-lg -rotate-1";
+        const pill = document.createElement("span");
+        pill.className = "inline-block bg-amber-500 text-stone-900 rounded-full px-3.5 py-1.5 text-xs font-extrabold tracking-wide";
+        pill.textContent = `${badgeDraft.emoji ? badgeDraft.emoji + " " : ""}${(badgeDraft.text || "").toLocaleUpperCase()}`;
+        card.appendChild(pill);
+        if (badgeDraft.support) {
+          const p = document.createElement("p");
+          p.className = "mt-2 text-sm font-bold leading-snug"; p.textContent = badgeDraft.support;
+          card.appendChild(p);
+        }
+        prev.appendChild(card);
+      }
+
+      const differ = badgesDiffer();
+      const canApply = !!(badgeDraft.text || badgeDraft.emoji);
+      $("applyBadgeBtn").disabled = !differ || !canApply;
+      $("badgeApplyStatus").textContent = !canApply ? "" : differ ? "Not on the reel yet. Press “Use this badge”."
+        : badge.enabled ? "✓ Showing on the reel." : "✓ Selected. Tick “Show this pop-up” to display it.";
+      renderBadgeSuggestions();
+    }
+    function onBadgeDraftInput() {
+      badgeDraft.support = $("badgeSupport").value.slice(0, MAX_SUPPORT);
+      renderBadgeEditor(true);
+    }
+    function fillSupportFromBudget() {
+      const t = polishBudget($("budgetField").value);
+      if (!t) { toast("Your Budget Win field is empty.", "error"); return; }
+      badgeDraft.support = t.slice(0, MAX_SUPPORT);
+      if (t.length > MAX_SUPPORT) toast(`Shortened to ${MAX_SUPPORT} characters. Edit it if needed.`);
+      renderBadgeEditor();
+    }
+    function applyBadge() {
+      badge.emoji = badgeDraft.emoji; badge.text = badgeDraft.text; badge.support = badgeDraft.support;
+      afterBadgeChange();
+    }
+    function toggleBadge(e) { badge.enabled = e.target.checked; afterBadgeChange(); }
+    function toggleBadgeInCaption(e) {
+      badge.inCaption = e.target.checked;
+      if (captionEdited) toast("Your caption is edited by hand, so it wasn't changed. Use Rewrite (or Rebuild) to add or remove the badge line.");
+      afterBadgeChange();
+    }
+    // The badge never touches your caption text, except when "Also add it to the caption" is on AND the caption is still auto-built.
+    function afterBadgeChange() {
+      if (!captionEdited) { const t = buildCaption(currentCaptionInputs()); setDraft(t); lastGenerated = t; }
+      renderBadgeEditor();
+      renderCanvasFrame(currentTime);
+      saveState();
+    }
+
+    // ---- Start a fresh post: clears every per-post setting so nothing leaks between posts ----
+    function newPost() {
+      if (!confirm("Start a new post? This clears the text fields, caption, rewrite instructions and pop-up highlight. Your photos, style settings and saved custom labels are kept.")) return;
+      cancelRewrite();
+      ["destField", "budgetField", "mishapField", "hookInput", "rewriteInstructions"].forEach(id => { const el = $(id); if (el) el.value = ""; });
+      $("rewriteTone").value = "keep"; $("rewriteLength").value = "keep";
+      selectedFormatKey = "cheeky"; buildFormatPills();
+      badge = { enabled: false, emoji: "", text: "", support: "", inCaption: false };
+      badgeDraft = { emoji: "", text: "", support: "" };
+      customFormOpen = false; editingCustomId = null;
+      captionHistory = []; updateUndoBtn();
+      showNotes([]); setRewriteStatus("");
+      captionEdited = false;
+      const t = buildCaption(currentCaptionInputs());
+      setDraft(t); lastGenerated = t;
+      updateCaptionBadge(); renderBadgeEditor(); renderCanvasFrame(0); saveState();
+      toast("New post started.");
+    }
+
+    // ---- Canvas pop-up (drawn on the reel, so it is included in the exported video) ----
+    function layoutBadgeSupport(text, maxWidth) {
+      if (!text) return { lines: [], size: 0, lh: 0, widest: 0 };
+      let size = 36, lines = [];
+      for (; size >= 24; size -= 2) {
+        ctx.font = `700 ${size}px 'Plus Jakarta Sans', sans-serif`;
+        lines = wrapLines(text, maxWidth);
+        if (lines.length <= 3) break;
+      }
+      size = Math.max(size, 24);
+      ctx.font = `700 ${size}px 'Plus Jakarta Sans', sans-serif`;
+      return { lines, size, lh: size * 1.25, widest: Math.max(...lines.map(l => ctx.measureText(l).width)) };
+    }
+    function roundedRectPath(x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+    function drawCallout(time, animate) {
+      if (!badge.enabled || !(badge.text || badge.emoji)) return;
+      const appearAt = Math.min(2.5, reelDuration * 0.3);
+      let q = 1;
+      if (animate) {
+        if (time < appearAt) return;
+        q = Math.min((time - appearAt) / 0.4, 1);
+      }
+      const c = q - 1;
+      const popScale = q >= 1 ? 1 : Math.max(0.01, 1 + 2.70158 * c * c * c + 1.70158 * c * c);   // ease-out-back "pop"
+
+      const label = `${badge.emoji ? badge.emoji + " " : ""}${(badge.text || "").toLocaleUpperCase()}`;
+      const padX = 34, padY = 26, pillH = 46, gap = 14;
+      ctx.font = `800 24px 'Plus Jakarta Sans', sans-serif`;
+      const pillW = ctx.measureText(label).width + 40;
+      const sup = layoutBadgeSupport(badge.support, W * 0.84 - padX * 2);
+      const cardW = Math.min(W * 0.88, Math.max(sup.widest, pillW) + padX * 2);
+      const cardH = padY * 2 + pillH + (sup.lines.length ? gap + sup.lines.length * sup.lh : 0);
+      const cx = W / 2, cy = Math.min(H * 0.17 + cardH / 2, H * 0.5);
+
+      ctx.save();
+      ctx.globalAlpha = Math.min(q * 1.6, 1);
+      ctx.translate(cx, cy);
+      ctx.rotate(-0.035);
+      ctx.scale(popScale, popScale);
+      ctx.shadowColor = "rgba(0,0,0,0.45)"; ctx.shadowBlur = 28; ctx.shadowOffsetY = 10;
+      ctx.fillStyle = "#FFF7E6";
+      roundedRectPath(-cardW / 2, -cardH / 2, cardW, cardH, 28);
+      ctx.fill();
+      ctx.shadowColor = "transparent";
+
+      ctx.fillStyle = "#F59E0B";
+      roundedRectPath(-cardW / 2 + padX - 6, -cardH / 2 + padY, pillW, pillH, pillH / 2);
+      ctx.fill();
+      ctx.fillStyle = "#1c1917";
+      ctx.font = `800 24px 'Plus Jakarta Sans', sans-serif`;
+      ctx.textBaseline = "middle"; ctx.textAlign = "left";
+      ctx.fillText(label, -cardW / 2 + padX - 6 + 20, -cardH / 2 + padY + pillH / 2 + 1);
+
+      if (sup.lines.length) {
+        ctx.font = `700 ${sup.size}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.textAlign = "center"; ctx.textBaseline = "top";
+        const textTop = -cardH / 2 + padY + pillH + gap;
+        sup.lines.forEach((line, i) => ctx.fillText(line, 0, textTop + i * sup.lh));
+      }
+      ctx.restore();
+    }
+
     function renderCanvasFrame(time, animateOverride) {
       const animate = animateOverride !== undefined ? animateOverride : (isPlaying || isRecording);
 
@@ -941,6 +1720,8 @@
       grad.addColorStop(1, "rgba(0,0,0,0.85)");
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, W, H);
+
+      drawCallout(time, animate);
 
       // On-screen hook
       const fullText = tidy($("hookInput").value);
@@ -1104,13 +1885,16 @@
     //  INIT
     // =====================================================================
     window.addEventListener("DOMContentLoaded", () => {
+      loadCustomLabels();
       restoreState();
       buildFormatPills();
       markSelectedSwatch();
       setDuration(reelDuration);
       loadSample("bangkok");
-      if (captionEdited) updateCaptionBadge(); else $("captionTextarea").value = buildCaption(currentCaptionInputs());
+      if (!captionEdited) { const t = buildCaption(currentCaptionInputs()); setDraft(t); lastGenerated = t; }
       updateCaptionBadge();
+      updateUndoBtn();
+      renderBadgeEditor();
       renderGallery();
       renderCanvasFrame(0);
       refreshIcons();
@@ -1120,7 +1904,7 @@
     window.addEventListener("pagehide", () => { releasePhotos(photos); });
 
     // Exposed for automated tests
-    window.FA = { buildCaption, polishNote, polishBudget, shortDest, FORMATS, TEMPLATES, usablePhotos,
+    window.FA = { suggestLabels, claimWarning, LABEL_LIBRARY, extractProtected, missingDetails, getBadge: () => ({ badge: { ...badge }, badgeDraft: { ...badgeDraft }, customLabels: customLabels.map(c => ({ ...c })) }), getDraftVersion: () => draftVersion, buildCaption, polishNote, polishBudget, shortDest, FORMATS, TEMPLATES, usablePhotos,
                   getState: () => ({ photos, isPlaying, isRecording, currentTime, reelDuration, captionEdited, selectedFormatKey }) };
   </script>
 </body>
