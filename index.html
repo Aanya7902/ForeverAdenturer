@@ -4,13 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ForeverAdventurer — Real Travel, Real Fun, Real Life IG Reels Creator</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Playfair+Display:ital,wght@0,700;1,600&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Anton&display=swap" rel="stylesheet" />
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     .reel-viewport { aspect-ratio: 9 / 16; max-height: 720px; }
     .ig-overlay-safezone { position: absolute; inset: 0; pointer-events: none; }
+    .swatch-selected { border-color: #f59e0b !important; box-shadow: 0 0 0 2px rgba(245,158,11,.35); }
+    button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible, label:focus-within { outline: 2px solid #f59e0b; outline-offset: 2px; }
+    #toast { transition: opacity .2s, transform .2s; }
   </style>
 </head>
 <body class="bg-stone-950 text-stone-100 min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-black">
@@ -33,7 +36,7 @@
 
   <!-- MAIN STUDIO LAYOUT -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-    
+
     <!-- LEFT PANEL: CONTROLS -->
     <div class="lg:col-span-7 space-y-6">
 
@@ -44,14 +47,14 @@
             <span class="w-6 h-6 rounded-full bg-amber-500 text-black text-xs font-black flex items-center justify-center">1</span>
             <h2 class="text-sm font-bold uppercase tracking-wider text-stone-200">Personal Travel Footage</h2>
           </div>
-          <span class="text-xs text-amber-400 font-semibold"><span id="photoCountBadge">4</span> photos</span>
+          <span class="text-xs text-amber-400 font-semibold"><span id="photoCountBadge">0</span> photos</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
           <label class="flex items-center justify-center space-x-2 p-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 cursor-pointer font-bold text-xs transition shadow-md">
             <i data-lucide="upload" class="w-4 h-4"></i>
             <span>Upload Photos (From Phone / PC)</span>
-            <input type="file" id="localFileInput" multiple accept="image/*" class="hidden" onchange="handleFileUpload(event)">
+            <input type="file" id="localFileInput" multiple accept="image/*" class="sr-only" onchange="handleFileUpload(event)">
           </label>
 
           <button onclick="loadSample('bangkok')" class="flex items-center justify-center space-x-2 p-3.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-200 font-bold text-xs transition border border-stone-700">
@@ -62,7 +65,7 @@
 
         <div>
           <div class="flex items-center justify-between text-xs text-stone-400 mb-2">
-            <span>Reel Sequence:</span>
+            <span>Reel Sequence (first → last):</span>
             <div class="flex items-center space-x-3">
               <button onclick="loadSample('bangkok')" class="text-amber-400 hover:underline">Bangkok Sample</button>
               <span class="text-stone-600">&bull;</span>
@@ -72,6 +75,7 @@
             </div>
           </div>
           <div id="galleryContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2 min-h-[90px] p-2 bg-stone-950 rounded-xl border border-stone-800/80"></div>
+          <p id="photoStatus" class="text-[11px] text-stone-500 mt-2 min-h-[1rem]" aria-live="polite"></p>
         </div>
       </section>
 
@@ -85,6 +89,7 @@
           <span class="text-xs text-amber-400 font-semibold">12 Formats</span>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="formatPillsContainer"></div>
+        <p class="text-[11px] text-stone-500">The angle shapes your Instagram caption (and the optional “Suggest hook” button below). Your own notes are always included in full.</p>
       </section>
 
       <!-- STEP 3: DESTINATION CONTEXT -->
@@ -94,28 +99,28 @@
             <span class="w-6 h-6 rounded-full bg-amber-500 text-black text-xs font-black flex items-center justify-center">3</span>
             <h2 class="text-sm font-bold uppercase tracking-wider text-stone-200">Destination Details & Reality Check</h2>
           </div>
-          <span class="text-xs text-stone-400">Live connects to caption</span>
+          <span class="text-xs text-stone-400">Your raw notes — the caption polishes them</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-stone-400 mb-1">Destination / Location</label>
-            <input id="destField" oninput="syncFromInputs()" type="text" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs text-stone-200 focus:border-amber-500 outline-none" value="Bangkok, Thailand (Talat Noi)">
+            <label for="destField" class="block text-xs font-semibold text-stone-400 mb-1">Destination / Location</label>
+            <input id="destField" oninput="onFieldInput()" type="text" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs text-stone-200 focus:border-amber-500 outline-none" value="Bangkok, Thailand (Talat Noi)">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-stone-400 mb-1">Budget Win / Bargain Find (£/$)</label>
-            <input id="budgetField" oninput="syncFromInputs()" type="text" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs text-stone-200 focus:border-amber-500 outline-none" value="free scrap metal art trail">
+            <label for="budgetField" class="block text-xs font-semibold text-stone-400 mb-1">Budget Win / Bargain Find (£/$)</label>
+            <input id="budgetField" oninput="onFieldInput()" type="text" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs text-stone-200 focus:border-amber-500 outline-none" value="free scrap metal art trail + two-pound duck noodles">
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-stone-400 mb-1">Honest Observation, Blooper or Fun Detail</label>
-          <input id="mishapField" oninput="syncFromInputs()" type="text" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs text-stone-200 focus:border-amber-500 outline-none" value="found a giant 14ft Bumblebee statue guarding an alleyway">
+          <label for="mishapField" class="block text-xs font-semibold text-stone-400 mb-1">Honest Observation, Blooper or Fun Detail</label>
+          <input id="mishapField" oninput="onFieldInput()" type="text" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs text-stone-200 focus:border-amber-500 outline-none" value="found a giant 14ft Bumblebee statue guarding an alleyway">
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1">Visual Filter / Color Grade</label>
+            <label for="filterPresetSelect" class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1">Visual Filter / Color Grade</label>
             <select id="filterPresetSelect" onchange="updateFilter()" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2 text-xs text-stone-200 outline-none">
               <option value="none">Natural / No Filter</option>
               <option value="golden" selected>Warm Golden Hour (Amber Glow)</option>
@@ -125,7 +130,7 @@
             </select>
           </div>
           <div>
-            <label class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1">Text Font Style</label>
+            <label for="fontFamilySelect" class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1">Text Font Style</label>
             <select id="fontFamilySelect" onchange="updateFont()" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2 text-xs text-stone-200 outline-none">
               <option value="'Plus Jakarta Sans', sans-serif">Modern Clean (Plus Jakarta)</option>
               <option value="'Playfair Display', serif">Cinematic Serif (Playfair)</option>
@@ -145,12 +150,12 @@
           </div>
           <span class="text-xs text-emerald-400 font-semibold flex items-center space-x-1">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>Live Sync Active</span>
+            <span>Preview updates live</span>
           </span>
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1.5">Reel Duration</label>
+          <span class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1.5">Reel Duration</span>
           <div class="grid grid-cols-5 gap-1.5 p-1 bg-stone-950 border border-stone-800 rounded-xl">
             <button onclick="setDuration(5)" id="dur-5" class="py-2 rounded-lg text-xs font-bold text-stone-400 hover:text-white transition">5s</button>
             <button onclick="setDuration(7)" id="dur-7" class="py-2 rounded-lg text-xs font-bold bg-amber-500 text-black shadow transition">7s</button>
@@ -161,36 +166,58 @@
         </div>
 
         <div>
-          <div class="flex items-center justify-between mb-1">
-            <label class="text-[11px] font-bold uppercase text-amber-400">On-Screen Reel Hook (Live Preview Sync)</label>
-            <div class="flex items-center space-x-2">
+          <div class="flex items-center justify-between mb-1 gap-2">
+            <label for="hookInput" class="text-[11px] font-bold uppercase text-amber-400">On-Screen Reel Hook</label>
+            <div class="flex items-center space-x-3">
+              <button onclick="applySuggestedHook()" class="text-[11px] text-amber-400 hover:underline">Suggest hook for this angle</button>
               <label class="flex items-center space-x-1.5 text-xs text-stone-400 cursor-pointer">
                 <input type="checkbox" id="typewriterCheckbox" onchange="toggleTypewriter(event)" checked class="w-3.5 h-3.5 accent-amber-500 rounded">
                 <span>Typewriter</span>
               </label>
             </div>
           </div>
-          <input id="hookInput" oninput="onCustomHookEdit()" type="text" class="w-full bg-stone-950 border border-stone-800 focus:border-amber-500 rounded-lg p-3 text-sm font-bold text-white outline-none" value="In a city full of legends, I found my favourite Autobot 🐝💛">
+          <input id="hookInput" oninput="onFieldInput()" type="text" class="w-full bg-stone-950 border border-stone-800 focus:border-amber-500 rounded-lg p-3 text-sm font-bold text-white outline-none" value="In a city full of legends, I found my favourite Autobot 🐝💛">
+          <p id="hookFitWarning" class="hidden text-[11px] text-amber-400 mt-1">⚠ This hook is very long, so it has been shrunk to the smallest size. Consider shortening it.</p>
         </div>
 
-        <div class="flex items-center space-x-2">
+        <div class="flex items-center space-x-2" id="colorPickerGroup">
           <span class="text-xs text-stone-400">Hook Color:</span>
-          <button onclick="setTextColor('#FFFFFF')" class="w-6 h-6 rounded-full bg-white border border-amber-500 shadow" title="White"></button>
-          <button onclick="setTextColor('#FACC15')" class="w-6 h-6 rounded-full bg-yellow-400 border border-transparent hover:border-white shadow" title="Gold"></button>
-          <button onclick="setTextColor('#FB923C')" class="w-6 h-6 rounded-full bg-orange-400 border border-transparent hover:border-white shadow" title="Sunset"></button>
-          <button onclick="setTextColor('#FB7185')" class="w-6 h-6 rounded-full bg-rose-400 border border-transparent hover:border-white shadow" title="Rose"></button>
-          <button onclick="setTextColor('#34D399')" class="w-6 h-6 rounded-full bg-emerald-400 border border-transparent hover:border-white shadow" title="Mint"></button>
+          <button data-color="#FFFFFF" onclick="setTextColor('#FFFFFF')" class="w-6 h-6 rounded-full bg-white border-2 border-transparent shadow" title="White" aria-label="White"></button>
+          <button data-color="#FACC15" onclick="setTextColor('#FACC15')" class="w-6 h-6 rounded-full bg-yellow-400 border-2 border-transparent shadow" title="Gold" aria-label="Gold"></button>
+          <button data-color="#FB923C" onclick="setTextColor('#FB923C')" class="w-6 h-6 rounded-full bg-orange-400 border-2 border-transparent shadow" title="Sunset" aria-label="Sunset"></button>
+          <button data-color="#FB7185" onclick="setTextColor('#FB7185')" class="w-6 h-6 rounded-full bg-rose-400 border-2 border-transparent shadow" title="Rose" aria-label="Rose"></button>
+          <button data-color="#34D399" onclick="setTextColor('#34D399')" class="w-6 h-6 rounded-full bg-emerald-400 border-2 border-transparent shadow" title="Mint" aria-label="Mint"></button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-stone-950 border border-stone-800/80 rounded-xl">
+          <div>
+            <label for="transitionSelect" class="block text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1">Photo Transition</label>
+            <select id="transitionSelect" onchange="updateTransition()" class="w-full bg-stone-900 border border-stone-700 rounded-lg p-2 text-xs text-stone-200 outline-none">
+              <option value="fade" selected>Smooth Cross-Dissolve / Fade</option>
+              <option value="slide">Directional Slide / Pan</option>
+              <option value="cut">Crisp Instant Cut</option>
+            </select>
+          </div>
+          <label class="flex items-center space-x-2 text-xs font-semibold text-stone-300 cursor-pointer self-end pb-2">
+            <input type="checkbox" id="vignetteCheckbox" onchange="toggleVignette(event)" checked class="w-4 h-4 accent-amber-500 rounded">
+            <span>Cinematic Vignette</span>
+          </label>
         </div>
 
         <div>
-          <div class="flex items-center justify-between mb-1">
-            <span class="text-[11px] font-semibold text-stone-400">Instagram Caption Draft</span>
-            <button onclick="copyCaption()" class="text-[11px] text-amber-400 hover:underline flex items-center space-x-1">
-              <i data-lucide="copy" class="w-3 h-3"></i>
-              <span>Copy Caption</span>
-            </button>
+          <div class="flex items-center justify-between mb-1 gap-2">
+            <label for="captionTextarea" class="text-[11px] font-semibold text-stone-400">Instagram Caption Draft</label>
+            <div class="flex items-center space-x-3">
+              <span id="captionModeBadge" class="text-[10px] text-emerald-400">Auto-updating</span>
+              <button onclick="regenerateCaption()" class="text-[11px] text-amber-400 hover:underline">Regenerate</button>
+              <button onclick="copyCaption()" class="text-[11px] text-amber-400 hover:underline flex items-center space-x-1">
+                <i data-lucide="copy" class="w-3 h-3"></i>
+                <span>Copy Caption</span>
+              </button>
+            </div>
           </div>
-          <textarea id="captionTextarea" rows="5" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs text-stone-200 focus:border-amber-500 outline-none leading-relaxed"></textarea>
+          <textarea id="captionTextarea" oninput="onCaptionManualEdit()" rows="9" class="w-full bg-stone-950 border border-stone-800 rounded-lg p-2.5 text-xs text-stone-200 focus:border-amber-500 outline-none leading-relaxed"></textarea>
+          <p class="text-[11px] text-stone-500 mt-1">Edit the caption freely: once you type in it, auto-updating pauses so your edits aren't overwritten. Press Regenerate to rebuild it from your fields.</p>
         </div>
       </section>
     </div>
@@ -198,16 +225,16 @@
     <!-- RIGHT PANEL: 9:16 LIVE PREVIEW -->
     <div class="lg:col-span-5 flex flex-col items-center">
       <div class="sticky top-20 w-full max-w-sm flex flex-col items-center">
-        
+
         <div class="w-full bg-stone-900 border-4 border-stone-800 rounded-[42px] p-3 shadow-2xl shadow-black relative overflow-hidden">
-          
+
           <div class="w-24 h-4 bg-stone-950 rounded-full mx-auto mb-2 flex items-center justify-center">
             <div class="w-3 h-3 rounded-full bg-stone-900 mr-2"></div>
             <div class="w-8 h-1.5 rounded-full bg-stone-900"></div>
           </div>
 
           <div class="reel-viewport w-full bg-black rounded-[32px] relative overflow-hidden flex items-center justify-center select-none shadow-inner">
-            <canvas id="reelCanvas" width="720" height="1280" class="w-full h-full object-cover"></canvas>
+            <canvas id="reelCanvas" width="720" height="1280" class="w-full h-full object-cover" role="img" aria-label="Reel preview"></canvas>
 
             <div class="ig-overlay-safezone flex flex-col justify-between p-4 z-10 text-white">
               <div class="flex items-center justify-between text-xs font-semibold drop-shadow-md">
@@ -215,7 +242,7 @@
                   <div class="w-5 h-5 rounded-md bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-[9px] font-black">FA</div>
                   <span class="text-xs font-bold tracking-tight">ForeverAdventurer</span>
                 </span>
-                <span class="text-[10px] bg-black/40 px-2 py-0.5 rounded-full backdrop-blur">Live Preview</span>
+                <span class="text-[10px] bg-black/40 px-2 py-0.5 rounded-full backdrop-blur" title="The Instagram buttons and numbers here are a mock-up and are not included in your exported video.">Preview mock-up</span>
               </div>
 
               <div class="self-end flex flex-col items-center space-y-4 mb-14 drop-shadow-md">
@@ -246,293 +273,855 @@
               </div>
 
               <div class="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
-                <div id="timelineProgressBar" class="h-full bg-amber-500 w-0 transition-all duration-100"></div>
+                <div id="timelineProgressBar" class="h-full bg-amber-500 w-0"></div>
               </div>
             </div>
           </div>
 
           <div class="mt-3 flex items-center justify-between px-2">
-            <button id="playPauseBtn" onclick="togglePlay()" class="p-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-black transition font-bold flex items-center justify-center shadow">
-              <i id="playIcon" data-lucide="play" class="w-4 h-4 fill-black"></i>
+            <button id="playPauseBtn" onclick="togglePlay()" aria-label="Play or pause preview" class="p-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-black transition font-bold flex items-center justify-center shadow w-9 h-9">
+              <span id="playIcon" class="flex items-center justify-center"><i data-lucide="play" class="w-4 h-4 fill-black"></i></span>
             </button>
             <span id="timecodeDisplay" class="text-xs text-stone-300 font-mono font-bold">00:00 / 00:07</span>
-            <button onclick="recordAndExportVideo()" class="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 hover:opacity-95 text-white font-bold text-xs transition shadow-lg">
+            <button id="exportBtn" onclick="recordAndExportVideo()" class="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 hover:opacity-95 text-white font-bold text-xs transition shadow-lg disabled:opacity-60 disabled:cursor-wait">
               <i data-lucide="download" class="w-3.5 h-3.5"></i>
-              <span>Export Reel MP4</span>
+              <span id="exportBtnText">Export Reel Video</span>
             </button>
           </div>
         </div>
+
+        <p class="text-[11px] text-stone-400 text-center mt-3">
+          Tap ▶ to preview the motion. <strong>Export</strong> saves an MP4 where your browser supports it (otherwise WebM, which Instagram may not accept). The exported video has no sound. Add your music in Instagram.
+        </p>
       </div>
     </div>
   </main>
 
+  <div id="toast" role="status" aria-live="polite" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-xl text-xs font-semibold shadow-2xl opacity-0 pointer-events-none translate-y-2 max-w-[90vw] text-center"></div>
+
   <script>
-    let photos = [];
+    // =====================================================================
+    //  STATE
+    // =====================================================================
+    let photos = [];            // { url, name, isBlob, isSample, img, state: 'loading'|'ready'|'failed' }
     let isPlaying = false;
+    let isRecording = false;
     let currentTime = 0;
     let reelDuration = 7;
     let animationFrameId = null;
+    let lastFrameTime = 0;
     let selectedFormatKey = "cheeky";
 
     let selectedFont = "'Plus Jakarta Sans', sans-serif";
     let selectedTextColor = "#FFFFFF";
     let activeFilter = "golden";
+    let activeTransition = "fade";
     let enableTypewriter = true;
+    let enableVignette = true;
+
+    let captionEdited = false;  // true once the user types in the caption box
+
+    const W = 720, H = 1280;
+    const MANTRA = "The world is wide. Your soul is limitless.";
+    const BRAND_TAGS = ["#ForeverAdventurer", "#SeeMoreSpendSmarter", "#TravelOver50", "#RealTravel"];
 
     const FORMATS = [
-      { key: "cheeky", label: "The Cheeky Traveller", icon: "smile" },
-      { key: "soulful", label: "The Soulful Journey", icon: "heart" },
-      { key: "budget", label: "Travel on a Budget", icon: "coins" },
-      { key: "adventure", label: "The Adventure Edit", icon: "compass" },
-      { key: "wish_i_knew", label: "Wish I Knew This Before", icon: "help-circle" },
-      { key: "worth_it", label: "Worth It or Overhyped?", icon: "scale" },
-      { key: "hidden_gems", label: "Hidden Gems", icon: "sparkles" },
-      { key: "real_diaries", label: "Real Travel Diaries", icon: "book-open" },
-      { key: "expect_reality", label: "Expectation vs Reality", icon: "eye" },
-      { key: "one_place", label: "One Place, Many Finds", icon: "map-pin" },
-      { key: "little_moments", label: "Little Moments, Big Memories", icon: "camera" },
-      { key: "ultimate_tip", label: "The Ultimate Travel Tip", icon: "zap" }
+      { key: "cheeky", label: "The Cheeky Traveller", icon: "smile", tag: "#CheekyTraveller" },
+      { key: "soulful", label: "The Soulful Journey", icon: "heart", tag: "#SoulfulTravel" },
+      { key: "budget", label: "Travel on a Budget", icon: "coins", tag: "#BudgetTravel" },
+      { key: "adventure", label: "The Adventure Edit", icon: "compass", tag: "#AdventureTravel" },
+      { key: "wish_i_knew", label: "Wish I Knew This Before", icon: "help-circle", tag: "#TravelTips" },
+      { key: "worth_it", label: "Worth It or Overhyped?", icon: "scale", tag: "#TravelReview" },
+      { key: "hidden_gems", label: "Hidden Gems", icon: "sparkles", tag: "#HiddenGems" },
+      { key: "real_diaries", label: "Real Travel Diaries", icon: "book-open", tag: "#TravelDiary" },
+      { key: "expect_reality", label: "Expectation vs Reality", icon: "eye", tag: "#ExpectationVsReality" },
+      { key: "one_place", label: "One Place, Many Finds", icon: "map-pin", tag: "#TravelFinds" },
+      { key: "little_moments", label: "Little Moments, Big Memories", icon: "camera", tag: "#LittleMoments" },
+      { key: "ultimate_tip", label: "The Ultimate Travel Tip", icon: "zap", tag: "#TravelTips" }
     ];
 
     const SAMPLES = {
       bangkok: [
-        { url: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=1080&q=80" },
-        { url: "https://images.unsplash.com/photo-1563492065599-3520f775eeed?auto=format&fit=crop&w=1080&q=80" },
-        { url: "https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=1080&q=80" },
-        { url: "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?auto=format&fit=crop&w=1080&q=80" }
+        "https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=1080&q=80",
+        "https://images.unsplash.com/photo-1563492065599-3520f775eeed?auto=format&fit=crop&w=1080&q=80",
+        "https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=1080&q=80",
+        "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?auto=format&fit=crop&w=1080&q=80"
       ],
       nepal: [
-        { url: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1080&q=80" },
-        { url: "https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?auto=format&fit=crop&w=1080&q=80" },
-        { url: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1080&q=80" },
-        { url: "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1080&q=80" }
+        "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1080&q=80",
+        "https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?auto=format&fit=crop&w=1080&q=80",
+        "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1080&q=80",
+        "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1080&q=80"
       ]
     };
 
-    let loadedImageElements = [];
+    // Canvas font weights per family (Anton only ships a single weight)
+    const FONT_WEIGHTS = {
+      "'Plus Jakarta Sans', sans-serif": 800,
+      "'Playfair Display', serif": 700,
+      "'Anton', sans-serif": 400,
+      "'Caveat', cursive": 700
+    };
 
-    window.addEventListener("DOMContentLoaded", () => {
-      buildFormatPills();
-      loadSample("bangkok");
-      syncFromInputs();
-      try { lucide.createIcons(); } catch(e){}
-    });
+    const $ = (id) => document.getElementById(id);
 
+    // =====================================================================
+    //  TEXT POLISHING (raw notes -> ready-to-post copy). Pure functions.
+    //  Raw fields are NEVER modified; only the generated caption is polished.
+    // =====================================================================
+    function tidy(s) { return String(s == null ? "" : s).replace(/\s+/g, " ").trim(); }
+
+    function fixShorthand(s) {
+      return s
+        .replace(/(^|[\s(])u(?=[\s.,!?)]|$)/g, "$1you")
+        .replace(/(^|[\s(])ur(?=[\s.,!?)]|$)/g, "$1your")
+        .replace(/(^|[\s(])im(?=[\s.,!?)]|$)/g, "$1I'm")
+        .replace(/(^|[\s(])ive(?=[\s.,!?)]|$)/g, "$1I've")
+        .replace(/(^|[\s(])i(?=[\s.,!?')]|$)/g, "$1I")
+        .replace(/(^|[\s(])dont(?=[\s.,!?)]|$)/g, "$1don't")
+        .replace(/(^|[\s(])cant(?=[\s.,!?)]|$)/g, "$1can't")
+        .replace(/(^|[\s(])didnt(?=[\s.,!?)]|$)/g, "$1didn't");
+    }
+    function capFirst(s) {
+      return s.replace(/^([("'“]*)([a-z])/, (m, a, b) => a + b.toUpperCase());
+    }
+    function stop(s) {
+      if (!s) return s;
+      if (/[.!?…:]["'”)\]]*$/.test(s)) return s;
+      if (/\p{Extended_Pictographic}\uFE0F?$/u.test(s)) return s;
+      return s + ".";
+    }
+    function polishNote(raw) {
+      const t = tidy(raw);
+      return t ? stop(capFirst(fixShorthand(t))) : "";
+    }
+    function polishBudget(raw) {
+      // Keeps the COMPLETE entry (prices, "+", brackets). Only tidies spacing, casing and shorthand.
+      const t = tidy(raw);
+      return t ? capFirst(fixShorthand(t)) : "";
+    }
+    function shortDest(dest) {
+      const d = tidy(dest);
+      const s = d.split("(")[0].trim().replace(/[,\s]+$/, "");
+      return s || d;
+    }
+    function destTags(dest) {
+      const parts = shortDest(dest).split(",").map(p => p.trim()).filter(Boolean).slice(0, 2);
+      return parts.map(p => {
+        const words = p.split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+        if (!words.length) return null;
+        return "#" + words.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join("") + "Travel";
+      }).filter(Boolean);
+    }
+
+    // One template per storytelling angle. c = { s: short destination, note, budget } (already polished).
+    // A falsy paragraph is simply skipped, so empty fields never produce invented content.
+    const TEMPLATES = {
+      cheeky: c => ({
+        hook: "Came for the views. Stayed because I took a wrong turn.",
+        paras: [`Exploring ${c.s}: expecting the usual tourist spots.`, c.note, c.budget && `Proof you don't need a fortune for an unforgettable memory: ${c.budget}`]
+      }),
+      soulful: c => ({
+        hook: `Leaving the noise behind: what ${c.s} taught me about slowing down.`,
+        paras: ["The best travel days aren't about rushing from sight to sight.", c.note, MANTRA]
+      }),
+      budget: c => ({
+        hook: `How to experience ${c.s} on a real budget.`,
+        paras: ["Skip the pricey tour packages and follow where the locals go.", c.budget && `Budget win: ${c.budget}`, c.note, "See more. Spend smarter. Wander freely."]
+      }),
+      adventure: c => ({
+        hook: `${c.s}: no itinerary, just curiosity.`,
+        paras: ["Rule one: say yes to the side street.", c.note, "See more. Wander freely. Live fully."]
+      }),
+      wish_i_knew: c => ({
+        hook: `Wish I knew this before ${c.s}...`,
+        paras: ["Nobody tells you the best bits aren't in the guidebook.", c.note, c.budget && `Save this one: ${c.budget}`]
+      }),
+      worth_it: c => ({
+        hook: `${c.s}: worth it or overhyped?`,
+        paras: ["Honest verdict coming up. No sponsored sugar-coating.", c.note, c.budget && `The receipts: ${c.budget}`]
+      }),
+      hidden_gems: c => ({
+        hook: `Hidden gem alert in ${c.s} 👀`,
+        paras: ["Not on the tourist map. I almost walked straight past it.", c.note, c.budget && `The cost of finding it: ${c.budget}`]
+      }),
+      real_diaries: c => ({
+        hook: `Real travel diary: ${c.s}.`,
+        paras: ["No filter, no staged shots. Just how the day actually went.", c.note, c.budget && `Today's receipts: ${c.budget}`]
+      }),
+      expect_reality: c => ({
+        hook: `${c.s}: expectation vs reality.`,
+        paras: ["Expectation: calm, cinematic, perfectly planned.", c.note && `Reality: ${c.note}`, "Laugh often. Real travel is beautifully messy."]
+      }),
+      one_place: c => ({
+        hook: `One place, so many finds: ${c.s}.`,
+        paras: ["One neighbourhood. Surprise after surprise.", c.note, c.budget && `And the best find? ${c.budget}`]
+      }),
+      little_moments: c => ({
+        hook: "Little moments, big memories.",
+        paras: [`${c.s}, in the small things.`, c.note, "Not the big sights. The moments in between."]
+      }),
+      ultimate_tip: c => ({
+        hook: `The #1 rule when exploring ${c.s}:`,
+        paras: ["Ditch the map for one afternoon.", c.note, c.budget && `Bonus win: ${c.budget}`, "Save this for your next trip!"]
+      })
+    };
+
+    function buildCaption(o) {
+      const dest = tidy(o.dest);
+      const s = shortDest(dest) || "this place";
+      const note = polishNote(o.note);
+      const budget = polishBudget(o.budget);
+      const tpl = (TEMPLATES[o.formatKey] || TEMPLATES.cheeky)({ s, note, budget });
+      const hook = tidy(o.hook) || tpl.hook;
+      const paras = tpl.paras.filter(Boolean).map(stop);
+      const body = paras.join("\n\n");
+
+      const out = [hook];
+      if (paras.length) out.push(body);
+
+      // Data-integrity guarantee: anything the user typed is shown in full somewhere, never silently dropped.
+      const facts = [];
+      if (dest) facts.push(`📍 ${dest}`);
+      if (note && !body.includes(note)) facts.push(`✨ ${note}`);
+      if (budget && !body.includes(budget)) facts.push(`🏷️ Budget win: ${budget}`);
+      if (facts.length) out.push(facts.join("\n"));
+
+      if (!body.includes(MANTRA)) out.push(`“${MANTRA}”`);
+      out.push("Save this for your next trip ✈️💛");
+
+      const fmt = FORMATS.find(f => f.key === o.formatKey);
+      const seen = new Set();
+      const tags = [...BRAND_TAGS, ...destTags(dest), fmt ? fmt.tag : null].filter(t => {
+        if (!t) return false;
+        const k = t.toLowerCase();
+        if (seen.has(k)) return false;
+        seen.add(k);
+        return true;
+      });
+      out.push(tags.join(" "));
+      return out.join("\n\n");
+    }
+
+    // =====================================================================
+    //  UI HELPERS
+    // =====================================================================
+    let toastTimer = null;
+    function toast(msg, kind) {
+      const el = $("toast");
+      el.textContent = msg;
+      el.className = "fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-xl text-xs font-semibold shadow-2xl max-w-[90vw] text-center " +
+        (kind === "error" ? "bg-rose-600 text-white" : "bg-emerald-500 text-black");
+      el.style.opacity = "1";
+      el.style.transform = "translate(-50%, 0)";
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { el.style.opacity = "0"; el.style.transform = "translate(-50%, 8px)"; }, 3200);
+    }
+    function refreshIcons() { try { if (window.lucide) lucide.createIcons(); } catch (e) { /* icons are decorative */ } }
+    function setPlayIcon(name) {
+      const holder = $("playIcon");
+      if (window.lucide) {
+        holder.innerHTML = `<i data-lucide="${name}" class="w-4 h-4 fill-black"></i>`;
+        refreshIcons();
+      } else {
+        holder.textContent = name === "pause" ? "❚❚" : "▶";
+      }
+    }
+    function setStatus(msg) { $("photoStatus").textContent = msg || ""; }
+
+    // =====================================================================
+    //  SAVING (text settings only; photos are never stored)
+    // =====================================================================
+    const STORE_KEY = "foreverAdventurer.v2";
+    let saveTimer = null;
+    function saveState() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        try {
+          localStorage.setItem(STORE_KEY, JSON.stringify({
+            dest: $("destField").value, budget: $("budgetField").value, mishap: $("mishapField").value,
+            hook: $("hookInput").value, caption: $("captionTextarea").value, captionEdited,
+            format: selectedFormatKey, duration: reelDuration, filter: activeFilter, font: selectedFont,
+            color: selectedTextColor, typewriter: enableTypewriter, vignette: enableVignette, transition: activeTransition
+          }));
+        } catch (e) { /* storage may be unavailable (private mode); app still works */ }
+      }, 300);
+    }
+    function restoreState() {
+      let s = null;
+      try { s = JSON.parse(localStorage.getItem(STORE_KEY) || "null"); } catch (e) { s = null; }
+      if (!s) return;
+      const setVal = (id, v) => { if (typeof v === "string") $(id).value = v; };
+      setVal("destField", s.dest); setVal("budgetField", s.budget); setVal("mishapField", s.mishap); setVal("hookInput", s.hook);
+      if (FORMATS.some(f => f.key === s.format)) selectedFormatKey = s.format;
+      if ([5, 7, 15, 30, 60].includes(s.duration)) reelDuration = s.duration;
+      if (["none", "golden", "vintage", "noir", "cool"].includes(s.filter)) { activeFilter = s.filter; $("filterPresetSelect").value = s.filter; }
+      if (FONT_WEIGHTS[s.font]) { selectedFont = s.font; $("fontFamilySelect").value = s.font; }
+      if (typeof s.color === "string" && /^#[0-9A-Fa-f]{6}$/.test(s.color)) selectedTextColor = s.color;
+      if (typeof s.typewriter === "boolean") { enableTypewriter = s.typewriter; $("typewriterCheckbox").checked = s.typewriter; }
+      if (typeof s.vignette === "boolean") { enableVignette = s.vignette; $("vignetteCheckbox").checked = s.vignette; }
+      if (["fade", "slide", "cut"].includes(s.transition)) { activeTransition = s.transition; $("transitionSelect").value = s.transition; }
+      if (s.captionEdited && typeof s.caption === "string") { captionEdited = true; $("captionTextarea").value = s.caption; }
+    }
+
+    // =====================================================================
+    //  FORMAT PILLS / CAPTION SYNC
+    // =====================================================================
     function buildFormatPills() {
-      const container = document.getElementById("formatPillsContainer");
+      const container = $("formatPillsContainer");
       container.innerHTML = "";
       FORMATS.forEach(fmt => {
         const btn = document.createElement("button");
         btn.onclick = () => selectFormat(fmt.key);
+        btn.setAttribute("aria-pressed", fmt.key === selectedFormatKey ? "true" : "false");
         btn.className = `p-2.5 rounded-xl border text-left transition flex items-center space-x-2 text-xs font-semibold ${
-          fmt.key === selectedFormatKey 
-            ? 'bg-amber-500/10 border-amber-500 text-amber-300' 
-            : 'bg-stone-950 border-stone-800 text-stone-300 hover:border-stone-700'
-        }`;
+          fmt.key === selectedFormatKey
+            ? 'bg-amber-500/10 border-amber-500 text-amber-300'
+            : 'bg-stone-950 border-stone-800 text-stone-300 hover:border-stone-700'}`;
         btn.innerHTML = `
           <i data-lucide="${fmt.icon}" class="w-3.5 h-3.5 shrink-0 ${fmt.key === selectedFormatKey ? 'text-amber-400' : 'text-stone-400'}"></i>
-          <span class="truncate">${fmt.label}</span>
-        `;
+          <span class="truncate"></span>`;
+        btn.querySelector("span").textContent = fmt.label;
         container.appendChild(btn);
       });
-      try { lucide.createIcons(); } catch(e){}
+      refreshIcons();
     }
 
     function selectFormat(key) {
+      if (key === selectedFormatKey) return;
+      if (captionEdited && !confirm("Switching angle will replace the caption you edited by hand. Continue?")) return;
       selectedFormatKey = key;
+      captionEdited = false;
       buildFormatPills();
-      syncFromInputs();
+      regenerateCaption();
     }
 
-    function syncFromInputs() {
-      const dest = document.getElementById("destField").value.trim() || "Bangkok, Thailand";
-      const budget = document.getElementById("budgetField").value.trim() || "free street art";
-      const mishap = document.getElementById("mishapField").value.trim() || "exploring hidden alleys";
-      const hook = document.getElementById("hookInput").value.trim();
-
-      const caption = `${hook}\n\n📍 Location: ${dest}\n✨ Detail: ${mishap}\n🏷️ Budget Win: ${budget}\n\n“The world is wide. Your soul is limitless.”\n\nSave this for your next trip! ✈️💛\n\n#ForeverAdventurer #BangkokTravel #SoloTravelOver50 #RealTravel #Autobot #HiddenGems`;
-      document.getElementById("captionTextarea").value = caption;
+    function currentCaptionInputs() {
+      return { formatKey: selectedFormatKey, dest: $("destField").value, budget: $("budgetField").value,
+               note: $("mishapField").value, hook: $("hookInput").value };
+    }
+    function updateCaptionBadge() {
+      const b = $("captionModeBadge");
+      b.textContent = captionEdited ? "Edited by hand (paused)" : "Auto-updating";
+      b.className = "text-[10px] " + (captionEdited ? "text-amber-400" : "text-emerald-400");
+    }
+    function regenerateCaption() {
+      captionEdited = false;
+      $("captionTextarea").value = buildCaption(currentCaptionInputs());
+      updateCaptionBadge();
       renderCanvasFrame(currentTime);
+      saveState();
     }
-
-    function onCustomHookEdit() {
-      syncFromInputs();
+    function onFieldInput() {
+      if (!captionEdited) $("captionTextarea").value = buildCaption(currentCaptionInputs());
       renderCanvasFrame(currentTime);
+      saveState();
+    }
+    function onCaptionManualEdit() {
+      captionEdited = true;
+      updateCaptionBadge();
+      saveState();
+    }
+    function applySuggestedHook() {
+      const i = currentCaptionInputs();
+      const s = shortDest(i.dest) || "this place";
+      const tpl = TEMPLATES[selectedFormatKey]({ s, note: polishNote(i.note), budget: polishBudget(i.budget) });
+      $("hookInput").value = tpl.hook;
+      onFieldInput();
+      toast("Hook suggested. Edit it however you like.");
     }
 
+    // =====================================================================
+    //  STYLE CONTROLS
+    // =====================================================================
+    function ensureFont(family) {
+      if (!document.fonts || !document.fonts.load) return Promise.resolve();
+      const wt = FONT_WEIGHTS[family] || 700;
+      const load = document.fonts.load(`${wt} 40px ${family}`, "Aa🐝").catch(() => {});
+      return Promise.race([load, new Promise(r => setTimeout(r, 1500))]);
+    }
     function updateFont() {
-      selectedFont = document.getElementById("fontFamilySelect").value;
+      selectedFont = $("fontFamilySelect").value;
       renderCanvasFrame(currentTime);
+      ensureFont(selectedFont).then(() => renderCanvasFrame(currentTime));
+      saveState();
     }
-
+    function markSelectedSwatch() {
+      document.querySelectorAll("#colorPickerGroup [data-color]").forEach(b => {
+        b.classList.toggle("swatch-selected", b.dataset.color.toLowerCase() === selectedTextColor.toLowerCase());
+      });
+    }
     function setTextColor(hex) {
       selectedTextColor = hex;
+      markSelectedSwatch();
       renderCanvasFrame(currentTime);
+      saveState();
     }
-
-    function updateFilter() {
-      activeFilter = document.getElementById("filterPresetSelect").value;
-      renderCanvasFrame(currentTime);
-    }
-
-    function toggleTypewriter(e) {
-      enableTypewriter = e.target.checked;
-      renderCanvasFrame(currentTime);
-    }
+    function updateFilter() { activeFilter = $("filterPresetSelect").value; renderCanvasFrame(currentTime); saveState(); }
+    function updateTransition() { activeTransition = $("transitionSelect").value; renderCanvasFrame(currentTime); saveState(); }
+    function toggleTypewriter(e) { enableTypewriter = e.target.checked; renderCanvasFrame(currentTime); saveState(); }
+    function toggleVignette(e) { enableVignette = e.target.checked; renderCanvasFrame(currentTime); saveState(); }
 
     function setDuration(sec) {
+      if (isRecording) { toast("Please wait for the export to finish.", "error"); return; }
       reelDuration = sec;
       [5, 7, 15, 30, 60].forEach(d => {
-        const btn = document.getElementById(`dur-${d}`);
-        if(btn) {
-          btn.className = d === sec 
+        const btn = $(`dur-${d}`);
+        if (btn) {
+          btn.className = d === sec
             ? "py-2 rounded-lg text-xs font-bold bg-amber-500 text-black shadow transition"
             : "py-2 rounded-lg text-xs font-bold text-stone-400 hover:text-white transition";
+          btn.setAttribute("aria-pressed", d === sec ? "true" : "false");
         }
       });
       currentTime = 0;
       updateProgressDisplay();
       renderCanvasFrame(0);
+      saveState();
     }
+
+    // =====================================================================
+    //  PHOTOS
+    // =====================================================================
+    function makePhoto(url, name, isBlob, isSample) {
+      const p = { url, name, isBlob, isSample, img: new Image(), state: "loading" };
+      if (!isBlob && /^https?:/i.test(url)) p.img.crossOrigin = "anonymous";
+      p.img.onload = () => { p.state = "ready"; renderGallery(); renderCanvasFrame(currentTime); };
+      p.img.onerror = () => {
+        p.state = "failed";
+        renderGallery();
+        renderCanvasFrame(currentTime);
+        setStatus(`Couldn't read “${p.name}”. If it's an iPhone HEIC photo, please export it as JPG or PNG. It has been left out of the reel.`);
+      };
+      p.img.src = url;
+      return p;
+    }
+    function releasePhotos(list) { list.forEach(p => { if (p.isBlob) { try { URL.revokeObjectURL(p.url); } catch (e) {} } }); }
+    function hasUserPhotos() { return photos.some(p => !p.isSample); }
 
     function loadSample(key) {
-      photos = [...SAMPLES[key]];
+      if (hasUserPhotos() && !confirm("This will replace the photos you uploaded with the demo photos. Continue?")) return;
+      releasePhotos(photos);
+      photos = SAMPLES[key].map((u, i) => makePhoto(u, `${key} sample ${i + 1}`, false, true));
+      setStatus("");
+      currentTime = 0;
       renderGallery();
-      preloadImages();
+      renderCanvasFrame(0);
     }
-
     function clearPhotos() {
+      if (hasUserPhotos() && !confirm("Remove all your uploaded photos from this reel?")) return;
+      releasePhotos(photos);
       photos = [];
+      setStatus("");
       renderGallery();
-      preloadImages();
+      renderCanvasFrame(0);
+    }
+    function removePhoto(index) {
+      const [gone] = photos.splice(index, 1);
+      if (gone) releasePhotos([gone]);
+      renderGallery();
+      renderCanvasFrame(currentTime);
+    }
+    function movePhoto(index, dir) {
+      const j = index + dir;
+      if (j < 0 || j >= photos.length) return;
+      [photos[index], photos[j]] = [photos[j], photos[index]];
+      renderGallery();
+      renderCanvasFrame(currentTime);
     }
 
     function renderGallery() {
-      const container = document.getElementById("galleryContainer");
-      document.getElementById("photoCountBadge").innerText = photos.length;
+      const container = $("galleryContainer");
+      $("photoCountBadge").textContent = photos.length;
       container.innerHTML = "";
-
+      if (!photos.length) {
+        const empty = document.createElement("p");
+        empty.className = "col-span-full text-center text-xs text-stone-500 py-6";
+        empty.textContent = "No photos yet. Upload some, or pick a demo sample above.";
+        container.appendChild(empty);
+        return;
+      }
       photos.forEach((photo, index) => {
         const item = document.createElement("div");
-        item.className = "relative group rounded-lg overflow-hidden border border-stone-800 aspect-square bg-stone-900";
-        item.innerHTML = `
-          <img src="${photo.url}" class="w-full h-full object-cover">
-          <button onclick="removePhoto(${index})" class="absolute top-1 right-1 p-1 rounded-full bg-rose-600 text-white text-[10px] opacity-80 hover:opacity-100">✕</button>
-          <span class="absolute bottom-1 left-1 bg-black/70 px-1 rounded text-[9px] font-mono text-stone-300">#${index + 1}</span>
-        `;
+        item.className = "relative rounded-lg overflow-hidden border aspect-square bg-stone-900 " + (photo.state === "failed" ? "border-rose-600" : "border-stone-800");
+
+        const thumb = document.createElement("img");
+        thumb.src = photo.url;
+        thumb.alt = `Photo ${index + 1}: ${photo.name}`;
+        thumb.className = "w-full h-full object-cover" + (photo.state === "failed" ? " opacity-30" : "");
+        item.appendChild(thumb);
+
+        const bar = document.createElement("div");
+        bar.className = "absolute top-1 left-1 right-1 flex items-center justify-between";
+        const mk = (label, aria, fn, disabled, extra) => {
+          const b = document.createElement("button");
+          b.textContent = label; b.setAttribute("aria-label", aria); b.disabled = !!disabled;
+          b.className = "w-6 h-6 rounded-full text-white text-[11px] leading-none flex items-center justify-center " + (extra || "bg-black/70 hover:bg-black") + (disabled ? " opacity-30" : "");
+          b.onclick = fn;
+          return b;
+        };
+        bar.appendChild(mk("◀", `Move photo ${index + 1} earlier`, () => movePhoto(index, -1), index === 0));
+        bar.appendChild(mk("✕", `Remove photo ${index + 1}`, () => removePhoto(index), false, "bg-rose-600 hover:bg-rose-500"));
+        bar.appendChild(mk("▶", `Move photo ${index + 1} later`, () => movePhoto(index, 1), index === photos.length - 1));
+        item.appendChild(bar);
+
+        const tag = document.createElement("span");
+        tag.className = "absolute bottom-1 left-1 bg-black/70 px-1 rounded text-[9px] font-mono " + (photo.state === "failed" ? "text-rose-300" : "text-stone-300");
+        tag.textContent = photo.state === "failed" ? `#${index + 1} failed` : photo.state === "loading" ? `#${index + 1} …` : `#${index + 1}`;
+        item.appendChild(tag);
         container.appendChild(item);
       });
     }
 
-    function removePhoto(index) {
-      photos.splice(index, 1);
-      renderGallery();
-      preloadImages();
-    }
-
-    function preloadImages() {
-      loadedImageElements = photos.map(p => {
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-        img.onload = () => renderCanvasFrame(currentTime);
-        img.src = p.url;
-        return img;
-      });
-      renderCanvasFrame(0);
-    }
-
     function handleFileUpload(event) {
-      const files = event.target.files;
+      const files = Array.from(event.target.files || []);
       if (!files.length) return;
-
-      Array.from(files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          photos.push({ url: e.target.result });
-          renderGallery();
-          preloadImages();
-        };
-        reader.readAsDataURL(file);
+      // Replace demo photos with the person's own on first upload, so demo shots never mix into a real reel.
+      if (photos.length && photos.every(p => p.isSample)) { releasePhotos(photos); photos = []; }
+      let skipped = 0;
+      files.forEach(file => {
+        if (!file.type || !file.type.startsWith("image/")) { skipped++; return; }
+        photos.push(makePhoto(URL.createObjectURL(file), file.name.replace(/\.[^/.]+$/, ""), true, false)); // order = selection order
       });
+      event.target.value = ""; // lets the same file be chosen again
+      setStatus(skipped ? `${skipped} file(s) skipped: only images can be added.` : "");
+      renderGallery();
+      renderCanvasFrame(currentTime);
     }
 
-    function copyCaption() {
-      const text = document.getElementById("captionTextarea").value;
-      navigator.clipboard.writeText(text);
-      alert("Caption copied to clipboard!");
+    async function copyText(text) {
+      try { await navigator.clipboard.writeText(text); return true; }
+      catch (e) {
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+          document.body.appendChild(ta); ta.select();
+          const ok = document.execCommand("copy");
+          document.body.removeChild(ta);
+          return ok;
+        } catch (e2) { return false; }
+      }
+    }
+    async function copyCaption() {
+      const text = $("captionTextarea").value;
+      if (!text.trim()) { toast("There's no caption to copy yet.", "error"); return; }
+      const ok = await copyText(text);
+      if (ok) toast("Caption copied to clipboard!");
+      else toast("Couldn't copy automatically. Select the text and copy it manually.", "error");
     }
 
-    // --- CANVAS ENGINE ---
-    const canvas = document.getElementById("reelCanvas");
+    // =====================================================================
+    //  CANVAS ENGINE
+    // =====================================================================
+    const canvas = $("reelCanvas");
     const ctx = canvas.getContext("2d");
+    const HAS_CTX_FILTER = "filter" in ctx;
 
-    function renderCanvasFrame(time) {
+    function filterString() {
+      switch (activeFilter) {
+        case "golden": return "sepia(0.3) saturate(1.3) brightness(1.05)";
+        case "vintage": return "contrast(1.15) saturate(1.2) sepia(0.15)";
+        case "noir": return "grayscale(1) contrast(1.3) brightness(0.95)";
+        case "cool": return "saturate(0.9) contrast(1.08) brightness(1.04)";
+        default: return "none";
+      }
+    }
+
+    function usablePhotos() { return photos.filter(p => p.state === "ready" && p.img.naturalWidth > 0); }
+
+    function drawPhoto(img, progress, offsetX, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      if (HAS_CTX_FILTER) ctx.filter = filterString();
+      const scale = 1.0 + progress * 0.10;
+      ctx.translate(W / 2 + offsetX, H / 2);
+      ctx.scale(scale, scale);
+      const iw = img.naturalWidth, ih = img.naturalHeight;
+      const imgRatio = iw / ih, canvasRatio = W / H;
+      let dw, dh;
+      if (imgRatio > canvasRatio) { dh = H; dw = H * imgRatio; } else { dw = W; dh = W / imgRatio; }
+      ctx.drawImage(img, -dw / 2, -dh / 2, dw, dh);
+      ctx.restore();
+    }
+
+    // Colour grade for browsers without ctx.filter (e.g. Safari), plus the Nordic blue tint everywhere.
+    function applyGradeOverlay() {
+      ctx.save();
+      if (!HAS_CTX_FILTER) {
+        if (activeFilter === "golden") { ctx.fillStyle = "rgba(255,160,40,0.16)"; ctx.fillRect(0, 0, W, H); }
+        else if (activeFilter === "vintage") { ctx.fillStyle = "rgba(120,80,40,0.14)"; ctx.fillRect(0, 0, W, H); }
+        else if (activeFilter === "noir") { ctx.globalCompositeOperation = "saturation"; ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, H); }
+      }
+      if (activeFilter === "cool") {
+        ctx.globalCompositeOperation = "soft-light";
+        ctx.fillStyle = "rgba(60,120,255,0.45)";
+        ctx.fillRect(0, 0, W, H);
+      }
+      ctx.restore();
+    }
+
+    function wrapLines(text, maxWidth) {
+      const words = text.split(" ");
+      const lines = [];
+      let line = "";
+      for (const w of words) {
+        const test = line ? line + " " + w : w;
+        if (ctx.measureText(test).width > maxWidth && line) { lines.push(line); line = w; }
+        else line = test;
+      }
+      if (line) lines.push(line);
+      return lines;
+    }
+    function fitText(text, maxWidth) {
+      const wt = FONT_WEIGHTS[selectedFont] || 700;
+      let size = 48, lines = [];
+      for (; size >= 26; size -= 2) {
+        ctx.font = `${wt} ${size}px ${selectedFont}`;
+        lines = wrapLines(text, maxWidth);
+        if (lines.length <= 5) break;
+      }
+      return { lines, size: Math.max(size, 26), lh: Math.max(size, 26) * 1.22, overflow: lines.length > 7 };
+    }
+
+    function renderCanvasFrame(time, animateOverride) {
+      const animate = animateOverride !== undefined ? animateOverride : (isPlaying || isRecording);
+
       ctx.fillStyle = "#000000";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(0, 0, W, H);
 
-      if (loadedImageElements.length > 0) {
-        const totalPhotos = loadedImageElements.length;
-        const timePerPhoto = reelDuration / totalPhotos;
-        const currentPhotoIndex = Math.min(Math.floor(time / timePerPhoto), totalPhotos - 1);
-        const img = loadedImageElements[currentPhotoIndex];
-        const photoProgress = (time % timePerPhoto) / timePerPhoto;
+      const list = usablePhotos();
+      if (list.length) {
+        const n = list.length;
+        const tpp = reelDuration / n;
+        const t = Math.max(0, Math.min(time, reelDuration - 1e-6));
+        const idx = Math.min(Math.floor(t / tpp), n - 1);
+        const local = t - idx * tpp;
+        const p = Math.max(0, Math.min(local / tpp, 1));
+        const tw = Math.min(0.6, tpp * 0.25);
 
-        if (img && img.complete && img.naturalWidth !== 0) {
+        if (idx < n - 1 && activeTransition !== "cut" && local > tpp - tw) {
+          let q = (local - (tpp - tw)) / tw;
+          q = Math.max(0, Math.min(q, 1));
+          if (activeTransition === "slide") {
+            const e = q * q * (3 - 2 * q);
+            drawPhoto(list[idx].img, p, -W * e, 1);
+            drawPhoto(list[idx + 1].img, 0, W * (1 - e), 1);
+          } else {
+            drawPhoto(list[idx].img, p, 0, 1);
+            drawPhoto(list[idx + 1].img, 0, 0, q);
+          }
+        } else {
+          drawPhoto(list[idx].img, p, 0, 1);
+        }
+        applyGradeOverlay();
+      } else {
+        const g = ctx.createLinearGradient(0, 0, 0, H);
+        g.addColorStop(0, "#1c1917"); g.addColorStop(1, "#0c0a09");
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+        if (!isRecording) {
           ctx.save();
-          
-          if (activeFilter === "golden") {
-            ctx.filter = "sepia(0.3) saturate(1.3) brightness(1.05)";
-          } else if (activeFilter === "vintage") {
-            ctx.filter = "contrast(1.15) saturate(1.2) sepia(0.15)";
-          } else if (activeFilter === "noir") {
-            ctx.filter = "grayscale(1) contrast(1.3) brightness(0.95)";
-          } else if (activeFilter === "cool") {
-            ctx.filter = "hue-rotate(180deg) saturate(0.9) brightness(1.05)";
-          } else {
-            ctx.filter = "none";
-          }
-
-          const scale = 1.0 + (photoProgress * 0.10);
-          ctx.translate(canvas.width / 2, canvas.height / 2);
-          ctx.scale(scale, scale);
-
-          const imgRatio = img.width / img.height;
-          const canvasRatio = canvas.width / canvas.height;
-          let drawWidth, drawHeight;
-
-          if (imgRatio > canvasRatio) {
-            drawHeight = canvas.height;
-            drawWidth = canvas.height * imgRatio;
-          } else {
-            drawWidth = canvas.width;
-            drawHeight = canvas.width / imgRatio;
-          }
-
-          ctx.drawImage(img, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
+          ctx.fillStyle = "rgba(255,255,255,0.35)";
+          ctx.font = `600 28px 'Plus Jakarta Sans', sans-serif`;
+          ctx.textAlign = "center"; ctx.textBaseline = "middle";
+          ctx.fillText("Add photos to preview your reel", W / 2, H * 0.4);
           ctx.restore();
         }
       }
 
-      // Bottom shadow gradient
-      const grad = ctx.createLinearGradient(0, canvas.height * 0.5, 0, canvas.height);
+      if (enableVignette) {
+        const v = ctx.createRadialGradient(W / 2, H / 2, H * 0.25, W / 2, H / 2, H * 0.75);
+        v.addColorStop(0, "rgba(0,0,0,0)");
+        v.addColorStop(1, "rgba(0,0,0,0.55)");
+        ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+      }
+
+      // Bottom shadow gradient (keeps text readable)
+      const grad = ctx.createLinearGradient(0, H * 0.5, 0, H);
       grad.addColorStop(0, "rgba(0,0,0,0)");
       grad.addColorStop(1, "rgba(0,0,0,0.85)");
       ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(0, 0, W, H);
 
-      // On-Screen Hook text
-      const fullText = document.getElementById("hookInput").value;
-      let displayText = fullText;
+      // On-screen hook
+      const fullText = tidy($("hookInput").value);
+      const warn = $("hookFitWarning");
+      if (!fullText) { warn.classList.add("hidden"); return; }
 
-      if (enableTypewriter) {
-        const typeDuration = 1.8;
-        const progress = Math.min(time / typeDuration, 1.0);
-        const visibleChars = Math.floor(progress * fullText.length);
-        displayText = fullText.substring(0, visibleChars);
-        if (progress < 1.0 && Math.floor(time * 4) % 2 === 0) {
-          displayText += "|";
-        }
+      const fit = fitText(fullText, W * 0.82);
+      warn.classList.toggle("hidden", !fit.overflow);
+      const blockH = fit.lines.length * fit.lh;
+      let top = H * 0.66 - blockH / 2;
+      top = Math.min(top, H * 0.78 - blockH);
+      top = Math.max(top, H * 0.18);
+
+      let remaining = Infinity; // characters still to reveal
+      if (animate && enableTypewriter) {
+        const typeDuration = Math.min(1.8, reelDuration * 0.4);
+        const total = fit.lines.reduce((a, l) => a + Array.from(l).length, 0);
+        remaining = Math.floor(Math.min(time / typeDuration, 1) * total);
       }
 
-      if (displayText) {
-        ctx.save();
+      ctx.save();
+      ctx.font = `${FONT_WEIGHTS[selectedFont] || 700} ${fit.size}px ${selectedFont}`;
+      ctx.textBaseline = "top";
+      ctx.textAlign = "left";
+      ctx.fillStyle = selectedTextColor;
+      ctx.shadowColor = "rgba(0,0,0,0.95)";
+      ctx.shadowBlur = 14;
+      ctx.lineJoin = "round";
+      ctx.strokeStyle = "rgba(0,0,0,0.35)";
+      ctx.lineWidth = Math.max(3, fit.size / 9);
+      fit.lines.forEach((line, i) => {
+        if (remaining <= 0) return;
+        const chars = Array.from(line);
+        const shown = chars.slice(0, remaining).join("");
+        remaining -= chars.length;
+        const x = W / 2 - ctx.measureText(line).width / 2;   // position from FULL line so text doesn't drift while typing
+        ctx.strokeText(shown, x, top + i * fit.lh);
+        ctx.fillText(shown, x, top + i * fit.lh);
+      });
+      ctx.restore();
+    }
+
+    // =====================================================================
+    //  PLAYBACK
+    // =====================================================================
+    const pad2 = (n) => String(Math.floor(n)).padStart(2, "0");
+    const fmtClock = (s) => `${pad2(s / 60)}:${pad2(s % 60)}`;
+
+    function updateProgressDisplay() {
+      const pct = Math.min(100, (currentTime / reelDuration) * 100);
+      $("timelineProgressBar").style.width = pct + "%";
+      $("timecodeDisplay").textContent = `${fmtClock(currentTime)} / ${fmtClock(reelDuration)}`;
+    }
+
+    function togglePlay() {
+      if (isRecording) return;
+      isPlaying ? pause() : play();
+    }
+    function play() {
+      if (isPlaying) return;
+      isPlaying = true;
+      setPlayIcon("pause");
+      lastFrameTime = performance.now();
+      animationFrameId = requestAnimationFrame(loop);
+    }
+    function pause() {
+      isPlaying = false;
+      setPlayIcon("play");
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+      renderCanvasFrame(currentTime);
+    }
+    function loop(now) {
+      if (!isPlaying) return;
+      const delta = Math.min((now - lastFrameTime) / 1000, 0.1); // clamp so a background tab can't jump the playhead
+      lastFrameTime = now;
+      currentTime += delta;
+      if (currentTime >= reelDuration) currentTime = 0;
+      renderCanvasFrame(currentTime);
+      updateProgressDisplay();
+      animationFrameId = requestAnimationFrame(loop);
+    }
+
+    // =====================================================================
+    //  EXPORT
+    // =====================================================================
+    function pickRecorderType() {
+      if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return "";
+      const candidates = ["video/mp4;codecs=avc1", "video/mp4", "video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"];
+      return candidates.find(t => MediaRecorder.isTypeSupported(t)) || "";
+    }
+    function setExportUi(busy, label) {
+      const b = $("exportBtn");
+      b.disabled = busy;
+      $("exportBtnText").textContent = label || "Export Reel Video";
+    }
+
+    async function recordAndExportVideo() {
+      if (isRecording) return;
+      if (!usablePhotos().length) { toast("Add at least one photo before exporting.", "error"); return; }
+      if (!canvas.captureStream || !window.MediaRecorder) {
+        toast("Your browser can't record video here. Try Chrome, Edge or Safari.", "error");
+        return;
+      }
+      pause();
+      await ensureFont(selectedFont);
+
+      const mime = pickRecorderType();
+      let recorder;
+      try {
+        recorder = new MediaRecorder(canvas.captureStream(30), mime ? { mimeType: mime, videoBitsPerSecond: 8000000 } : undefined);
+      } catch (e) {
+        toast("Couldn't start the video recorder in this browser.", "error");
+        return;
+      }
+
+      isRecording = true;
+      const chunks = [];
+      const duration = reelDuration;
+      const fileTag = selectedFormatKey;
+      recorder.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
+      recorder.onerror = () => { isRecording = false; setExportUi(false); toast("Recording failed. Please try again.", "error"); };
+      recorder.onstop = () => {
+        isRecording = false;
+        const type = recorder.mimeType || mime || "video/webm";
+        const ext = type.includes("mp4") ? "mp4" : "webm";
+        const blob = new Blob(chunks, { type });
+        setExportUi(false);
+        currentTime = 0; updateProgressDisplay(); renderCanvasFrame(0);
+        if (!blob.size) { toast("The export came out empty. Please try again.", "error"); return; }
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = `ForeverAdventurer_${fileTag}_${duration}s.${ext}`;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
+        toast(ext === "mp4" ? `Exported your ${duration}s reel as MP4.` : `Exported as WebM. Instagram may need an MP4, so convert it first.`);
+      };
+
+      setExportUi(true, "Recording… 0%");
+      recorder.start(250);
+      const startedAt = performance.now();
+      const frame = (now) => {
+        if (!isRecording) return;
+        const t = (now - startedAt) / 1000;
+        if (t >= duration) {
+          currentTime = duration - 1e-3;
+          renderCanvasFrame(currentTime);
+          recorder.stop();
+          return;
+        }
+        currentTime = t;
+        renderCanvasFrame(t);
+        updateProgressDisplay();
+        $("exportBtnText").textContent = `Recording… ${Math.round((t / duration) * 100)}%`;
+        requestAnimationFrame(frame);
+      };
+      requestAnimationFrame(frame);
+    }
+
+    // =====================================================================
+    //  INIT
+    // =====================================================================
+    window.addEventListener("DOMContentLoaded", () => {
+      restoreState();
+      buildFormatPills();
+      markSelectedSwatch();
+      setDuration(reelDuration);
+      loadSample("bangkok");
+      if (captionEdited) updateCaptionBadge(); else $("captionTextarea").value = buildCaption(currentCaptionInputs());
+      updateCaptionBadge();
+      renderGallery();
+      renderCanvasFrame(0);
+      refreshIcons();
+      ensureFont(selectedFont).then(() => renderCanvasFrame(currentTime));
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => renderCanvasFrame(currentTime));
+    });
+    window.addEventListener("pagehide", () => { releasePhotos(photos); });
+
+    // Exposed for automated tests
+    window.FA = { buildCaption, polishNote, polishBudget, shortDest, FORMATS, TEMPLATES, usablePhotos,
+                  getState: () => ({ photos, isPlaying, isRecording, currentTime, reelDuration, captionEdited, selectedFormatKey }) };
+  </script>
+</body>
+</html>
